@@ -114,7 +114,7 @@
   function updateTransferify(done){
     if(busy){if(done)done({ok:false,message:'Transferify ocupado. Aguarde a transferência terminar.'});return;}
     setBusy(true,'CHECKING FOR UPDATES…');
-    try{var nr=typeof require==='function'?require:window.cep_node.require,root=cs.getSystemPath(SystemPath.EXTENSION);nr(root+'/js/updater.js').run(root,'0.8.4').then(function(result){setBusy(false);status(result.message);if(done)done(result);},function(error){var result={ok:false,message:String(error.message||error)};setBusy(false);status(result.message);if(done)done(result);});}catch(error){var result={ok:false,message:String(error.message||error)};setBusy(false);status(result.message);if(done)done(result);}
+    try{var nr=typeof require==='function'?require:window.cep_node.require,root=cs.getSystemPath(SystemPath.EXTENSION);(function(){var modulePath=root+'/js/updater.js';if(nr.cache&&nr.resolve)delete nr.cache[nr.resolve(modulePath)];return nr(modulePath);})().run(root,'0.8.4').then(function(result){setBusy(false);status(result.message);if(done)done(result);},function(error){var result={ok:false,message:String(error.message||error)};setBusy(false);status(result.message);if(done)done(result);});}catch(error){var result={ok:false,message:String(error.message||error)};setBusy(false);status(result.message);if(done)done(result);}
   }
   $('updatePlugin').onclick=function(){$('settingsMenu').hidden=true;$('settingsToggle').setAttribute('aria-expanded','false');updateTransferify();};
   $('reloadPanel').onclick=function(){
