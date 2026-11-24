@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExtensionManifest Version="7.0" ExtensionBundleId="com.robb.transferify.qa" ExtensionBundleVersion="0.8.4" ExtensionBundleName="Transferify 0.8.4">
+  <ExtensionList>
+    <Extension Id="com.robb.transferify.qa.panel" Version="0.8.4"/>
+  </ExtensionList>
+  <ExecutionEnvironment>
+    <HostList>
+      <Host Name="ILST" Version="[20.0,99.9]"/>
+      <Host Name="AEFT" Version="[13.0,99.9]"/>
+    </HostList>
+    <LocaleList><Locale Code="All"/></LocaleList>
+    <RequiredRuntimeList><RequiredRuntime Name="CSXS" Version="6.0"/></RequiredRuntimeList>
+  </ExecutionEnvironment>
+  <DispatchInfoList>
+    <Extension Id="com.robb.transferify.qa.panel">
+      <DispatchInfo>
+        <Resources>
+          <MainPath>./index.html</MainPath>
+          <ScriptPath>./jsx/host.jsx</ScriptPath>
+          <CEFCommandLine>
+            <Parameter>--enable-nodejs</Parameter>
+            <Parameter>--mixed-context</Parameter>
+          </CEFCommandLine>
+        </Resources>
+        <Lifecycle><AutoVisible>true</AutoVisible></Lifecycle>
+        <UI>
+          <Type>Panel</Type>
+          <Menu>Transferify 0.8.4</Menu>
+          <Geometry>
+            <Size><Height>625</Height><Width>516</Width></Size>
+            <MinSize><Height>260</Height><Width>150</Width></MinSize>
+            <MaxSize><Height>1200</Height><Width>600</Width></MaxSize>
+          </Geometry>
+        </UI>
+      </DispatchInfo>
+    </Extension>
+  </DispatchInfoList>
+</ExtensionManifest>

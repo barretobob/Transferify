@@ -1,0 +1,142 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Transferify</title><link rel="stylesheet" href="style.css?v=071"><style>
+.settings-menu{position:relative;display:flex;justify-content:flex-end;margin:5px 0}.settings-menu #settingsToggle{width:30px;font-size:19px;background:transparent;color:#aaa;border:0;cursor:pointer}.settings-menu #settingsMenu{position:absolute;right:0;bottom:30px;z-index:20;width:125px;padding:4px;background:#303030;border:1px solid #555;border-radius:4px}.settings-menu #settingsMenu[hidden]{display:none!important}.settings-menu #settingsMenu button{display:block;width:100%;height:28px;margin:0;text-align:left;background:#303030;color:#ddd;border:0;padding:5px 10px;font:12px Arial,sans-serif;cursor:pointer}.settings-menu #settingsMenu button:hover{background:#444}
+</style></head><body><main id="app"><div class="ae-only" id="aePanel"><header><img class="logo" src="assets/logo.svg" alt="Transferify"><div class="hostline"><span id="hostLabel"></span><small>v0.8.4</small></div></header><div class="comp-modes"><button id="figmaNew" aria-label="New Comp"><svg class="mode-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16" fill="none" stroke="currentColor" stroke-width="4"/></svg><strong>NEW COMP</strong></button><button id="figmaCurrent" aria-label="Current"><svg class="mode-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v8h6l-9 10-9-10h6z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><strong>CURRENT</strong></button><button id="applyComp" type="button"><svg class="apply-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4L19 6" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><strong>APPLY</strong></button></div><div class="comp-settings-grid"><div class="setting-scale"><label>Comp size multiplier<select id="figmaScale" aria-label="Comp size multiplier"><option value="1">1×</option><option value="2">2×</option><option value="3">3×</option><option value="4">4×</option></select></label></div><div class="setting-duration"><label>Comp duration (sec) <input id="figmaDuration" type="number" min="0.1" max="10800" step="0.1" value="5" aria-label="Comp duration"></label></div><div class="setting-fps"><label>Frame rate (fps) <input id="figmaFps" type="number" min="1" max="120" step="0.001" value="30" aria-label="Frame rate"></label></div><div class="setting-background"><label for="compBackground">Background color</label><button id="compBackground" type="button" value="#000000" aria-label="Background color" title="Choose background color"><span class="color-swatch"></span></button></div></div><div class="checks"><label><input id="figmaParametric" type="checkbox" checked>Detect parametric shapes</label><label><input id="figmaMatchAlpha" type="checkbox" checked>Match source alpha (project)</label></div><div class="folderrow"><span class="folder-label">IMG FOLDER</span><div id="folderAe"></div><button id="chooseAe" aria-label="Choose image folder"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M2 5h8l2 3h10v12H2z"/></svg></button><button id="resetFolderAe" aria-label="Use automatic project IMAGENS folder" title="Voltar para IMAGENS automática do projeto">↺</button></div><section class="combined-actions"><div class="grid"><button id="pushFromAI" class="" aria-label="Push from AI"><img class="action-icon" src="assets/icon-down.svg" alt=""><strong class="plain-label">PUSH FROM AI</strong></button><button id="sendAI" class="" aria-label="Send to AI"><img class="action-icon" src="assets/icon-up.svg" alt=""><strong class="plain-label">SEND TO AI</strong></button><button id="pushFromFigma" aria-label="Push from Figma" title="Push selection from the open Figma plugin"><svg viewBox="0 0 38 57" aria-hidden="true"><path fill="#29abe2" d="M9.5 57A9.5 9.5 0 0 1 0 47.5V38h9.5a9.5 9.5 0 0 1 0 19ZM0 28.5A9.5 9.5 0 0 1 9.5 19H19v19H9.5A9.5 9.5 0 0 1 0 28.5ZM0 9.5A9.5 9.5 0 0 1 9.5 0H19v19H9.5A9.5 9.5 0 0 1 0 9.5ZM19 0h9.5a9.5 9.5 0 0 1 0 19H19V0Zm19 28.5a9.5 9.5 0 1 1-19 0 9.5 9.5 0 0 1 19 0Z"/></svg><strong>PUSH FROM FIGMA</strong></button><button id="createArtboard" class="" aria-label="Create artboard"><img class="action-icon" src="assets/icon-artboard.svg" alt=""><strong class="plain-label">CREATE ARTBOARD</strong></button><button id="pushFromPS" class="import" aria-label="PUSH FROM PS"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v8h6l-9 10-9-10h6z" fill="currentColor"/></svg><strong class="plain-label">PUSH FROM PS</strong></button><button id="removeArtboard" class="" aria-label="Remove artboard"><img class="action-icon" src="assets/icon-remove-artboard.svg" alt=""><strong class="plain-label">REMOVE ARTBOARD FROM SHAPE</strong></button><button id="importGuidesPS" class="import" aria-label="IMPORT GUIDES FROM PS"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v8h6l-9 10-9-10h6z" fill="currentColor"/></svg><strong class="plain-label">IMPORT GUIDES FROM PS</strong></button><button id="pushGuidesPS" class="push" aria-label="PUSH GUIDES TO PS"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v8h6l-9 10-9-10h6z" fill="currentColor"/></svg><strong class="plain-label">PUSH GUIDES TO PS</strong></button><button id="importGuides" class="import" aria-label="Import guides from AI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v8h6l-9 10-9-10h6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><strong class="plain-label">IMPORT GUIDES FROM AI</strong></button><button id="pushGuidesAI" class="push" aria-label="Push guides to AI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v8h6l-9 10-9-10h6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><strong class="plain-label">PUSH GUIDES TO AI</strong></button><button id="precomp" class="" aria-label="Precomp"><img class="action-icon" src="assets/icon-precomp.svg" alt=""><strong class="plain-label">PRECOMP</strong></button><button id="join" class="" aria-label="Join layers"><img class="action-icon" src="assets/icon-join.svg" alt=""><strong class="plain-label">JOIN SHAPE LAYER</strong></button><button id="decomp" class="" aria-label="Decomp"><img class="action-icon" src="assets/icon-decomp.svg" alt=""><strong class="plain-label">DECOMP</strong></button><button id="split" class="" aria-label="Split layers"><img class="action-icon" src="assets/icon-split.svg" alt=""><strong class="plain-label">SPLIT SHAPE LAYER</strong></button></div></section></div><div class="ai-only" id="aiPanel"><header><img class="logo" src="assets/logo.svg" alt="Transferify"><div class="hostline"><span>ILLUSTRATOR</span><small>v0.8.4</small></div></header><div class="ai-folder"><div hidden><div id="folder"></div><button id="choose"></button><button id="resetFolder"></button></div></div><section><h2 class="ai-section-title">AFTER EFFECTS</h2><div class="grid ai-transfer"><button id="pushFromAE" class="blue" aria-label="PUSH FROM AE"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v8h6l-9 10-9-10h6z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>PUSH FROM AE</span></button><button id="sendAE" class="orange" aria-label="SEND TO AE"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v8h6l-9 10-9-10h6z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>SEND TO AE</span></button><button id="importGuidesAI" class="blue" aria-label="IMPORT GUIDES FROM AE"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v8h6l-9 10-9-10h6z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>IMPORT GUIDES FROM AE</span></button><button id="pushGuidesAE" class="orange" aria-label="PUSH GUIDES TO AE"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v8h6l-9 10-9-10h6z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>PUSH GUIDES TO AE</span></button></div></section><section class="ai-composition"><h2 class="ai-section-title">COMPOSITION</h2><button id="createComp" class="orange" aria-label="Create comp from artboard"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v8h6l-9 10-9-10h6z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>CREATE COMP FROM ARTBOARD</span></button><p class="hint">Comp settings and image folder are defined in the Transferify panel in After Effects.</p></section></div><div hidden><span id="connectionState"></span><button id="figmaPause"></button><button id="figmaReconnect"></button><button id="toggleGuides"></button><button id="removeControls"></button></div><div id="progressWrap"><div id="progressBar"></div></div><div class="panel-footer"><div id="status" role="status">READY</div><div class="settings-menu"><button id="settingsToggle" type="button" aria-label="Settings" aria-expanded="false" title="Settings">⚙</button><div id="settingsMenu" hidden><button id="updatePlugin" type="button">Update</button><button id="reloadPanel" type="button">Reload</button></div></div></div></main><script src="lib/CSInterface.js?v=062"></script><script>
+(function(){
+  var cs=new CSInterface();
+  function $(id){return document.getElementById(id);}
+  function rawHost(){try{return String(cs.getHostEnvironment().appName||"").toLowerCase();}catch(e){return "";}}
+  function host(){var h=rawHost();return (h.indexOf("illustrator")>=0||h==="ilst")?"ai":"ae";}
+  function status(t){$("status").textContent=t;}
+  function esc(s){return String(s).replace(/\\/g,"\\\\").replace(/"/g,'\\"');}
+  var busy=false,hostReady=false;
+  function setBusy(v,msg){
+    busy=v;$("progressWrap").style.display=v?"block":"none";
+    var bs=document.querySelectorAll("button");for(var i=0;i<bs.length;i++)bs[i].disabled=v;
+    if(msg)status(msg);
+  }
+  function run(fn,args,cb){
+    if(busy||!hostReady)return;
+    var a=args||[],parts=[];
+    for(var i=0;i<a.length;i++)parts.push('"'+esc(a[i])+'"');
+    setBusy(true,"WORKING • "+fn);
+    var freshHost=cs.getSystemPath(SystemPath.EXTENSION)+'/jsx/host.jsx';
+    var reloadHost='$.evalFile(new File('+JSON.stringify(freshHost)+'));';
+    cs.evalScript(reloadHost+"Transferify."+fn+"("+parts.join(",")+")",function(r){
+      setBusy(false);status(r||"DONE");if(cb)cb(r);
+    });
+  }
+  function runPS(fn,args){run(fn,args,function(message){if(message!=='PHOTOSHOP • request sent')return;setBusy(true,'WAITING FOR PHOTOSHOP…');var began=Date.now();function poll(){cs.evalScript('Transferify._lastPSResult?Transferify._plainJSON(Transferify._lastPSResult):"PENDING"',function(value){if(value==='PENDING'&&Date.now()-began<90000){setTimeout(poll,200);return;}setBusy(false);try{var result=JSON.parse(value);status(result.message);}catch(e){status('Photoshop did not finish in time. Check the destination before retrying.');}});}poll();});}
+  function shadowScan(){return "true";}
+  function customFolder(){return localStorage.getItem("transferify.qa.imageFolderMode")==="manual"?(localStorage.getItem("transferify.qa.imageFolder")||""):"";}
+  function refreshFolder(){
+    var f=customFolder();
+    $("folder").textContent=$("folderAe").textContent=f||"AUTO · projeto/IMAGENS/";
+    $("folder").title=$("folderAe").title=f||"Automático: IMAGENS do projeto. Dentro de AEP, usa a pasta IMAGENS ao lado de AEP. Clique na pasta para escolher outro destino.";
+  }
+
+  var h=host();
+  document.body.className=h==="ai"?"host-ai":"host-ae";
+  $("hostLabel").textContent=h==="ai"?"ILLUSTRATOR":"AFTER EFFECTS";
+
+  $("chooseAe").onclick=$("choose").onclick=function(){
+    run("chooseFolder",[],function(r){
+      if(r&&r!=="CANCEL"&&r.indexOf("ERROR")!==0){
+        localStorage.setItem("transferify.qa.imageFolderMode","manual");localStorage.setItem("transferify.qa.imageFolder",r);refreshFolder();syncOptions();
+      }
+    });
+  };
+
+  if($('pushFromPS'))$('pushFromPS').onclick=function(){runPS('pushFromPS',[customFolder()]);};
+  if($('importGuidesPS'))$('importGuidesPS').onclick=function(){runPS('importGuidesFromPS',[]);};
+  if($('pushGuidesPS'))$('pushGuidesPS').onclick=function(){runPS('pushGuidesToPS',[]);};
+  if($("sendAE"))$("sendAE").onclick=function(){run("sendToAE",["",shadowScan()]);};
+  if($("pushFromAE"))$("pushFromAE").onclick=function(){run("pushFromAE",[]);};
+  if($("sendAI"))$("sendAI").onclick=function(){run("sendToAI",[]);};
+  if($("pushFromAI"))$("pushFromAI").onclick=function(){run("pushFromAI",[customFolder(),shadowScan()]);};
+  if($("createComp"))$("createComp").onclick=function(){run("createCompFromArtboard",[]);};
+  if($("importGuidesAI"))$("importGuidesAI").onclick=function(){run("importGuidesFromAE",[]);};
+  if($("pushGuidesAE"))$("pushGuidesAE").onclick=function(){run("pushGuidesToAE",[]);};
+  if($("createArtboard"))$("createArtboard").onclick=function(){run("createArtboardFromComp",[]);};
+  if($("importGuides"))$("importGuides").onclick=function(){run("importGuidesFromAI",[]);};
+  if($("pushGuidesAI"))$("pushGuidesAI").onclick=function(){run("pushGuidesToAI",[]);};
+  $('precomp').onclick=function(){run('precompSelected',[]);};
+  $('toggleGuides').onclick=function(){run('toggleGuideLayers',[]);};
+  $('removeControls').onclick=function(){run('removeGroupControls',[]);};
+  if($("decomp"))$("decomp").onclick=function(){run("decomp",[]);};
+  if($("split"))$("split").onclick=function(){run("splitLayers",[]);};
+  if($("join"))$("join").onclick=function(){run("joinLayers",[]);};
+  if($("removeArtboard"))$("removeArtboard").onclick=function(){run("removeArtboard",[]);};
+
+
+  var figmaMode=localStorage.getItem('transferify.qa.figma.mode')||'new';
+  function saveFigmaMode(mode){figmaMode=mode;localStorage.setItem('transferify.qa.figma.mode',mode);$('figmaNew').className=mode==='new'?'active':'';$('figmaCurrent').className=mode==='current'?'active':'';$('figmaFps').disabled=$('figmaDuration').disabled=false;}
+  $('figmaNew').onclick=function(){saveFigmaMode('new');syncOptions();status('Next import → NEW COMP');};
+  $('figmaCurrent').onclick=function(){saveFigmaMode('current');syncOptions();status('Next import → CURRENT COMP');};
+  saveFigmaMode(figmaMode);
+
+  var optionIds=['compBackground','figmaScale','figmaFps','figmaDuration','figmaParametric','figmaMatchAlpha'];
+  optionIds.forEach(function(id){var e=$(id),saved=localStorage.getItem('transferify.qa.'+id);if(saved!==null){if(e.type==='checkbox')e.checked=saved==='true';else e.value=saved;}e.onchange=function(){localStorage.setItem('transferify.qa.'+id,e.type==='checkbox'?String(e.checked):e.value);syncOptions();};});
+  $('resetFolderAe').onclick=$('resetFolder').onclick=function(){localStorage.setItem('transferify.qa.imageFolderMode','auto');localStorage.removeItem('transferify.qa.imageFolder');refreshFolder();syncOptions();};
+  function figmaOptions(){var hex=$('compBackground').value;return {background:[parseInt(hex.substr(1,2),16)/255,parseInt(hex.substr(3,2),16)/255,parseInt(hex.substr(5,2),16)/255],mode:figmaMode,multiplier:Number($('figmaScale').value),fps:Number($('figmaFps').value),duration:Number($('figmaDuration').value),parametric:$('figmaParametric').checked,precompGroups:false};}
+  function syncOptions(cb){if(h!=='ae'){if(cb)cb();return;}var o=figmaOptions();o.imageFolder=customFolder();o.matchFigmaAlpha=$('figmaMatchAlpha').checked;cs.evalScript('Transferify.setImportOptions('+JSON.stringify(JSON.stringify(o))+')',function(r){if(r&&r.indexOf('ERROR')===0)status(r);if(cb)cb(r);});}
+  function paintBackground(){var value=$('compBackground').value||'#000000';$('compBackground').style.backgroundColor=value;}
+  paintBackground();
+  $('compBackground').onclick=function(){var button=this,old=button.value||'#000000';run('chooseBackgroundColor',[old],function(result){if(/^#[0-9a-fA-F]{6}$/.test(result||'')){button.value=result;localStorage.setItem('transferify.qa.compBackground',result);paintBackground();syncOptions();}});};
+  $('pushFromFigma').onclick=function(){if(!figmaServer){status('Open the Figma plugin and wait for the connection.');return;}var result=figmaServer.requestPull(figmaMode);status(result.message);};
+  $('applyComp').onclick=function(){var o=figmaOptions();run('applyCompSettings',[JSON.stringify(o)]);};
+  var figmaServer=null;
+  function startReceiver(){
+    if(figmaServer)return;
+    try{var nodeRequire=typeof require==='function'?require:window.cep_node.require,root=cs.getSystemPath(SystemPath.EXTENSION),bridgePath=root+'/js/figma-bridge.js';if(nodeRequire.cache&&nodeRequire.resolve){delete nodeRequire.cache[nodeRequire.resolve(bridgePath)];delete nodeRequire.cache[nodeRequire.resolve(root+'/js/figma-normalize.js')];}var bridge=nodeRequire(bridgePath);
+      function loadNative(script,callback){cs.evalScript('$.evalFile(new File('+JSON.stringify(root+'/jsx/host.jsx')+'));'+script,callback);}
+      function waitNativeResult(key,callback){var start=Date.now();function poll(){cs.evalScript('Transferify.'+key+'?Transferify._plainJSON(Transferify.'+key+'):"PENDING"',function(value){if(value==='PENDING'&&Date.now()-start<90000){setTimeout(poll,200);return;}try{callback(JSON.parse(value));}catch(e){callback({ok:false,message:'Destination timed out. Check the destination before retrying.'});}});}poll();}
+      figmaServer=bridge.start({assetDir:root+'/assets',update:updateTransferify,exportIllustrator:function(done){setBusy(true,'EXPORTING FROM ILLUSTRATOR…');loadNative('Transferify.requestAISVG()',function(result){if(result!=='PENDING'){setBusy(false);return done({ok:false,message:result});}waitNativeResult('_lastAISVGResult',function(result){setBusy(false);status(result.ok?'ILLUSTRATOR → FIGMA • selection exported':result.message||'Illustrator export failed');done(result);});});},activate:function(done){cs.evalScript('(function(){try{BridgeTalk.bringToFront(BridgeTalk.appName);return "OK";}catch(e){return "ERROR: "+String(e);}})()',function(r){done(r==='OK'?null:r||'After did not respond');});},isBusy:function(){return busy;},importer:function(data,done){
+        if(data.protocol==='transferify-figma-svg'){setBusy(true,'SENDING TO ILLUSTRATOR…');loadNative('Transferify.sendFigmaSVGToAI('+JSON.stringify(JSON.stringify(data))+')',function(result){if(result!=='PENDING'){setBusy(false);return done({ok:false,message:result});}waitNativeResult('_lastFigmaAIResult',function(result){setBusy(false);status(result.message);done(result);});});return;}
+        var requestedMode=data.compMode,precompGroups=data.precompGroups===true;data.importOptions=figmaOptions();data.importOptions.precompGroups=precompGroups;if(requestedMode==='new'||requestedMode==='current')data.importOptions.mode=requestedMode;data.matchFigmaAlpha=$('figmaMatchAlpha').checked;setBusy(true,'IMPORTING FROM FIGMA…');
+        var fs=nodeRequire('fs'),path=nodeRequire('path'),os=nodeRequire('os'),tempDir=null;
+        function finish(result){setBusy(false);if(tempDir)try{fs.rmSync(tempDir,{recursive:true,force:true});}catch(ignore){}status(result.message+(result.warnings&&result.warnings.length?' • '+result.warnings.join(' | '):''));done(result);}
+        try{
+          tempDir=fs.mkdtempSync(path.join(os.tmpdir(),'transferify-command-'));
+          var payloadFile=path.join(tempDir,'payload.hex'),raw=JSON.stringify(data),chunks=[];
+          for(var offset=0;offset<raw.length;offset+=8192){var hex='';for(var i=offset;i<Math.min(offset+8192,raw.length);i++)hex+=('0000'+raw.charCodeAt(i).toString(16)).slice(-4);chunks.push(hex);}
+          fs.writeFileSync(payloadFile,chunks.join(''),'ascii');
+          var command='(function(){var stage="load-host";try{$.evalFile(new File('+JSON.stringify(root+'/jsx/host.jsx')+'));stage="read-package";var f=new File('+JSON.stringify(payloadFile)+');f.encoding="BINARY";if(!f.open("r"))throw Error("Cannot read transfer package");var raw;try{raw=f.read();}finally{f.close();}stage="decode-package";var data=Transferify._decodePayload(raw);stage="import";var result=Transferify.receiveFigma(data,'+JSON.stringify(customFolder())+');return result||"TRANSFERIFY_EMPTY_RESULT";}catch(e){return "TRANSFERIFY_HOST_ERROR ["+stage+"]: "+String(e)+" | line "+e.line;}})()';
+          command=command.replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
+          cs.evalScript(command,function(value){var result;try{result=JSON.parse(value);if(!result||typeof result.ok!=='boolean')throw Error('Invalid response');}catch(e){result={ok:false,message:value&&String(value)!=='undefined'?String(value):'O After retornou uma resposta vazia ao importar. Confira se criou camadas antes de reenviar.'};}finish(result);var compId=result.destinationCompId||result.createdCompId;if(result.ok&&typeof compId==='number'&&compId>0&&Math.floor(compId)===compId){
+            cs.evalScript('(function(){try{var c=app.project.itemByID('+compId+');if(!(c instanceof CompItem))return "Composition not found";c.openInViewer();return "OPENED";}catch(e){return String(e);}})()',function(opened){if(opened!=='OPENED')status(result.message+' • Composição importada, mas não foi possível abrir o painel: '+String(opened||'sem resposta'));});
+          }});
+        }catch(e){finish({ok:false,message:'Falha ao preparar envio ao After: '+String(e.message||e)});}
+
+      }},function(error){if(error){figmaServer=null;$('connectionState').textContent='Connection: '+error.message;status('Connection: '+error.message);return;}$('connectionState').textContent='Automatic connection active · Figma and Illustrator settings shared.';$('figmaPause').textContent='Pause receiver';status('READY · FIGMA CONNECTED');});
+    }catch(e){figmaServer=null;status('Connection: '+e.message);}
+  }
+  $('figmaReconnect').onclick=function(){if(figmaServer){var old=figmaServer;figmaServer=null;old.close(startReceiver);}else startReceiver();};
+  $('figmaPause').onclick=function(){if(figmaServer){figmaServer.close();figmaServer=null;$('connectionState').textContent='Receiver paused';$('figmaPause').textContent='Resume receiver';}else startReceiver();};
+  window.addEventListener('beforeunload',function(){if(figmaServer)figmaServer.close();});
+  $('settingsToggle').onclick=function(){var menu=$('settingsMenu');menu.hidden=!menu.hidden;this.setAttribute('aria-expanded',String(!menu.hidden));};
+  function updateTransferify(done){
+    if(busy){if(done)done({ok:false,message:'Transferify ocupado. Aguarde a transferência terminar.'});return;}
+    setBusy(true,'CHECKING FOR UPDATES…');
+    try{var nr=typeof require==='function'?require:window.cep_node.require,root=cs.getSystemPath(SystemPath.EXTENSION);nr(root+'/js/updater.js').run(root,'0.8.4').then(function(result){setBusy(false);status(result.message);if(done)done(result);},function(error){var result={ok:false,message:String(error.message||error)};setBusy(false);status(result.message);if(done)done(result);});}catch(error){var result={ok:false,message:String(error.message||error)};setBusy(false);status(result.message);if(done)done(result);}
+  }
+  $('updatePlugin').onclick=function(){$('settingsMenu').hidden=true;$('settingsToggle').setAttribute('aria-expanded','false');updateTransferify();};
+  $('reloadPanel').onclick=function(){
+    if(busy){status('Wait for the current transfer to finish before reloading.');return;}
+    this.disabled=true;
+    var reloaded=false;
+    function reload(){if(reloaded)return;reloaded=true;window.location.reload(true);}
+    // A persistent Figma HTTP connection must not block the panel refresh.
+    if(figmaServer){
+      var server=figmaServer;figmaServer=null;
+      setTimeout(reload,750);
+      try{server.close(reload);if(server.closeAllConnections)server.closeAllConnections();}catch(e){reload();}
+    }else reload();
+  };
+  refreshFolder();status('LOADING…');
+  var hostFile=cs.getSystemPath(SystemPath.EXTENSION)+'/jsx/host.jsx';
+  cs.evalScript('(function(){try{$.evalFile(new File('+JSON.stringify(hostFile)+'));return "HOST_READY";}catch(e){return "ERROR: "+String(e);}})()',function(result){
+    if(!result||result==='EvalScript error.'||String(result).indexOf('ERROR')===0){status(result||'ERROR: Host script did not load');return;}
+    hostReady=true;status('READY');if(h==='ae')syncOptions(function(){startReceiver();});
+  });
+})();
+</script></body></html>

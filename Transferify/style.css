@@ -1,0 +1,151 @@
+*{box-sizing:border-box}html{overflow-x:hidden}html,body{margin:0;background:#232323;color:#ccc;font:11px Arial,sans-serif}#app{padding:16px 11px 8px;min-width:0}.ae-only,.ai-only{display:none}.host-ae .ae-only,.host-ai .ai-only{display:block}header{padding-bottom:7px;border-bottom:1px solid #363636}.logo{display:block;width:154px;height:18px}.hostline{display:flex;justify-content:space-between;color:#777;font-size:8px;margin-top:5px}.hostline small{font-size:8px}.comp-modes{display:flex;justify-content:center;gap:4px;margin:13px 0 14px}.comp-modes button{width:103px;background:#29abe2;color:#ccc}.comp-modes #figmaCurrent{background:#f7931e}.comp-modes .active{box-shadow:none}button{min-width:0;height:25px;border:0;border-radius:2px;background:#2d2d2d;color:#ccc;font:10px Arial,sans-serif;cursor:pointer;padding:3px 6px}button:hover{filter:brightness(1.18)}button:focus-visible{outline:1px solid #ccc;outline-offset:1px}button:disabled{opacity:.45;cursor:default}.settings{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 12px;margin-bottom:10px}.settings label{display:flex;align-items:center;gap:7px;white-space:nowrap;color:#888;font-size:11px}.settings small{font-size:8px}select,input[type=number]{width:42px;height:23px;background:#292929;color:#999;border:1px solid #555;border-radius:2px;text-align:center;font:8px Arial,sans-serif;padding:3px}input[type=number]{appearance:textfield}input::-webkit-inner-spin-button{appearance:none}.label{font-size:11px;color:#888;margin:0 0 5px}.folderrow{display:flex;gap:4px;min-width:0}.folderrow>div{flex:1;min-width:0;height:26px;background:#191919;border:1px solid #333;color:#888;padding:6px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.folderrow button{flex:0 0 27px;height:26px;border:1px solid #3a3a3a;color:#888}.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin-top:17px}.checks label{display:flex;align-items:center;gap:6px;color:#888;font-size:8px;line-height:1.35}.checks input{flex:0 0 12px;width:12px;height:12px;margin:0;accent-color:#b7b7b7}.hint{font-size:8px;color:#888;line-height:1.5;margin:9px 0 19px}section{border-top:1px solid #363636;margin-top:13px;padding-top:9px}h2{margin:0 0 8px;font-size:12px;height:13px}h2 img{height:13px;width:auto;display:block}.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px}.grid button{display:flex;align-items:center;justify-content:center;gap:4px;height:25px;white-space:normal;line-height:1.15}.grid img,.grid svg{flex:0 0 18px;width:18px;height:18px}.import svg{color:#29abe2}.push svg{color:#ff931e;transform:rotate(180deg)}#status{margin-top:16px;font-size:8px;color:#888;line-height:1.4;overflow-wrap:anywhere}#progressWrap{display:none;height:2px;margin-top:8px;background:#191919;overflow:hidden}#progressBar{height:100%;width:35%;background:#29abe2;animation:progress 1s linear infinite}@keyframes progress{from{transform:translateX(-100%)}to{transform:translateX(400%)}}.host-ai .label{margin-top:12px}.host-ai .check{display:flex;margin-top:12px}[hidden]{display:none!important}@media(max-width:390px){.settings{justify-content:flex-start}.settings label{font-size:10px}.checks{grid-template-columns:1fr}.grid button{font-size:9px;min-height:29px;height:auto;padding:5px 4px}.hint{margin-bottom:14px}}@media(max-width:240px){#app{padding:10px 7px}.grid button{font-size:8px;gap:2px}.grid img,.grid svg{width:14px;height:14px;flex-basis:14px}.comp-modes button{width:auto;flex:1}}/* Fill the host panel; keep minimum usable sizes and scroll only on actual overflow. */
+html,body{min-height:100%;height:100%}#app{min-height:100vh;display:flex;flex-direction:column}.host-ae #aePanel{display:flex;flex:1;flex-direction:column}#aePanel header,#aePanel .comp-modes,#aePanel .settings,#aePanel .label,#aePanel .folderrow,#aePanel .checks,#aePanel .hint{flex-shrink:0}#aePanel section{display:flex;flex-direction:column;flex:3 0 auto}#aePanel section:last-child{flex-grow:2}#aePanel section .grid{flex:1;grid-auto-rows:minmax(25px,1fr)}#aePanel .grid button{height:100%;min-height:25px}#status{flex-shrink:0;margin-top:10px}@media(max-width:420px){#aePanel .grid{grid-template-columns:minmax(0,1fr)}#aePanel .grid button:nth-child(1){order:1}#aePanel .grid button:nth-child(3){order:2}#aePanel .grid button:nth-child(5){order:3}#aePanel .grid button:nth-child(2){order:4}#aePanel .grid button:nth-child(4){order:5}#aePanel .grid button:nth-child(6){order:6}#aePanel .grid button{min-height:27px;font-size:10px}#aePanel section .grid{grid-auto-rows:minmax(27px,1fr)}}
+
+/* CEP / Chromium scrollbar matches the panel palette. */
+::-webkit-scrollbar{width:10px;height:10px;background:#191919}::-webkit-scrollbar-track{background:#191919}::-webkit-scrollbar-thumb{background:#f7931e;border:2px solid #191919;border-radius:6px;min-height:24px}::-webkit-scrollbar-thumb:hover{background:#ffab42}::-webkit-scrollbar-corner{background:#191919}
+
+/* Original outlined labels from the supplied design, with unchanged proportions. */
+#app button .button-lettering{display:block;width:auto;height:25px;max-width:100%;flex:0 1 auto;object-fit:contain}#app .comp-modes button{padding:0;display:flex;align-items:center;justify-content:center}#app .grid button{padding:0 4px}#app .grid button.import,#app .grid button.push{gap:0}
+
+.panel-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;flex-shrink:0}.panel-footer #status{margin:0;min-width:0;flex:1}#reloadPanel{flex-shrink:0;height:22px;padding:3px 8px;font:9px Arial,sans-serif;color:#999;background:#2d2d2d}
+
+/* Illustrator host: same responsive palette, without changing the After layout. */
+.host-ai #aiPanel{display:flex;flex:1;flex-direction:column}.ai-folder{margin-top:20px;flex-shrink:0}.ai-shadow{display:flex;align-items:center;gap:6px;margin:13px 0 5px;color:#888;font-size:8px;line-height:1.4}.ai-shadow input{margin:0;width:12px;height:12px;accent-color:#b7b7b7}.host-ai .ai-folder .label{margin-top:0}.ai-section-title{font:900 12px Arial,sans-serif;letter-spacing:.4px;color:#ccc}.host-ai #aiPanel section{display:flex;flex-direction:column;flex:2 0 auto;margin-top:19px}.host-ai #aiPanel .ai-composition{flex:1 0 auto}.host-ai #aiPanel .grid{flex:1;grid-auto-rows:minmax(29px,1fr)}.host-ai #aiPanel .grid button{height:100%;min-height:29px}.host-ai #aiPanel button svg{width:18px;height:18px;flex:0 0 18px}.host-ai #aiPanel .blue svg{color:#29abe2}.host-ai #aiPanel .orange svg{color:#f7931e;transform:rotate(180deg)}.host-ai #aiPanel button span{font:10px Arial,sans-serif;line-height:1.2}.host-ai #createComp{display:flex;align-items:center;justify-content:center;gap:5px;width:100%;min-height:29px;height:auto;flex:1}.host-ai .ai-composition .hint{margin:9px 0 0}@media(max-width:360px){.host-ai #aiPanel .grid{grid-template-columns:minmax(0,1fr)}.host-ai #aiPanel .grid button:nth-child(1){order:1}.host-ai #aiPanel .grid button:nth-child(3){order:2}.host-ai #aiPanel .grid button:nth-child(2){order:3}.host-ai #aiPanel .grid button:nth-child(4){order:4}}@media(max-width:240px){.host-ai #aiPanel button span{font-size:9px}}
+
+/* Readable configuration labels and values, including narrow panels. */
+#aePanel .settings{gap:10px 16px}#aePanel .settings label{font-size:12px;line-height:1.4;gap:7px;color:#b8b8b8}#aePanel .settings small{font-size:11px;color:#aaa}#aePanel .settings select,#aePanel .settings input[type=number]{font-size:12px;height:28px;width:52px;color:#ddd;padding:4px}#aePanel .label{font-size:12px;color:#aaa}#aePanel .folderrow>div{font-size:12px;color:#aaa}#aePanel .checks label{font-size:10px;color:#aaa}#aePanel .hint{font-size:10px;color:#999}
+
+/* Compact settings in a single row, aligned fields when stacked. */
+#aePanel .settings{display:grid;grid-template-columns:auto auto auto;justify-content:space-between;gap:9px 12px}#aePanel .settings label{font-size:11px;gap:5px;color:#b8b8b8;display:grid;grid-template-columns:auto 45px auto;align-items:center}#aePanel .settings small{font-size:10px}#aePanel .settings select,#aePanel .settings input[type=number]{font-size:11px;width:45px;height:26px;border:1px solid #f7931e;background:#292929;color:#ddd}#aePanel .label,#aePanel .folderrow>div{font-size:11px}#aePanel .checks label,#aePanel .hint{font-size:9px}#chooseAe{border:1px solid #29abe2;background:#232323;color:#29abe2;display:flex;align-items:center;justify-content:center;padding:0}#chooseAe svg{width:15px;height:15px;display:block}#resetFolderAe{border:1px solid #f7931e;background:#232323;color:#f7931e;font:bold 14px Arial,sans-serif;padding:0}@media(max-width:479px){#aePanel .settings{grid-template-columns:minmax(0,1fr);justify-content:initial}#aePanel .settings label{grid-template-columns:125px 45px auto;justify-content:start;gap:7px}}@media(max-width:240px){#aePanel .settings label{grid-template-columns:112px 45px auto;font-size:10px;gap:5px}}
+
+#app .comp-modes button{display:flex;align-items:center;justify-content:center;gap:5px;font:700 11px Arial,sans-serif;padding:0 7px}#app .comp-modes button strong{font-weight:700}#app .comp-modes .comp-symbol{font:900 16px Arial,sans-serif;line-height:1}
+
+#app .comp-modes button{border:1pt solid transparent}#app .comp-modes button.active{border-color:#ccc;box-shadow:none}
+
+#app .comp-modes button{opacity:.75}#app .comp-modes button.active{opacity:1}#app .comp-modes button:disabled{opacity:.45}
+
+.comp-apply-row{display:flex;align-items:center;gap:8px;margin:3px 0 12px;flex-shrink:0;color:#b8b8b8;font-size:11px}#compBackground{width:42px;height:26px;padding:2px;border:1px solid #f7931e;background:#232323;cursor:pointer}#applyComp{margin-left:auto;padding:4px 16px;background:#f7931e;color:#ccc;font-weight:700}.comp-apply-row input::-webkit-color-swatch-wrapper{padding:0}.comp-apply-row input::-webkit-color-swatch{border:0}
+
+#app #aePanel .grid button{display:grid;grid-template-columns:18px minmax(0,140px);justify-content:center;align-items:center;gap:5px;padding:0 8px}#app #aePanel .grid button .action-icon,#app #aePanel .grid button>svg{width:18px;height:18px}#app #aePanel .grid button .action-text{width:140px;height:25px;max-width:100%;object-fit:contain;object-position:left center}@media(max-width:260px){#app #aePanel .grid button{grid-template-columns:18px minmax(0,140px)}}
+
+
+/* Larger After action icons and lettering, keeping consistent icon columns. */
+#app #aePanel .grid button{grid-template-columns:22px minmax(0,162px);gap:6px;min-height:32px}#app #aePanel section .grid{grid-auto-rows:minmax(32px,1fr)}#app #aePanel .grid button .action-icon,#app #aePanel .grid button>svg{width:22px;height:22px}#app #aePanel .grid button .action-text{width:162px;height:29px;max-width:100%}
+
+/* Two aligned settings rows; Apply spans their full height. */
+.comp-settings-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 64px;grid-template-areas:"scale duration apply" "fps background apply";gap:9px 12px;margin:0 0 12px;flex-shrink:0}.setting-scale{grid-area:scale}.setting-duration{grid-area:duration}.setting-fps{grid-area:fps}.setting-background{grid-area:background}.comp-settings-grid>div{display:flex;align-items:center;min-width:0;gap:5px}.comp-settings-grid label{display:flex;align-items:center;gap:5px;width:100%;font-size:11px;color:#b8b8b8;white-space:nowrap}.comp-settings-grid label>input,.comp-settings-grid label>select{margin-left:auto;flex:0 0 45px}.comp-settings-grid label>small{font-size:10px;color:#aaa;min-width:14px}.comp-settings-grid select,.comp-settings-grid input[type=number]{font-size:11px;width:45px;height:26px;border:1px solid #f7931e;background:#292929;color:#ddd;padding:4px}.comp-settings-grid .setting-scale label:after{content:"";width:14px;flex:0 0 14px}.comp-settings-grid .setting-background>label{width:auto;flex:1}.comp-settings-grid #compBackground{width:45px;flex:0 0 45px;margin-right:19px}.comp-settings-grid #applyComp{grid-area:apply;height:100%;min-height:61px;width:64px;padding:4px 6px;margin:0;background:#f7931e;font-weight:700}@media(max-width:450px){.comp-settings-grid{grid-template-columns:minmax(0,1fr) 64px;grid-template-areas:"scale apply" "fps apply" "duration apply" "background apply"}.comp-settings-grid>div label{width:100%}.comp-settings-grid .setting-background>label{width:auto}.comp-settings-grid #applyComp{min-height:61px}}
+
+@media(max-width:450px){.comp-settings-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"scale" "fps" "duration" "background" "apply"}.comp-settings-grid #applyComp{width:100%;height:28px;min-height:28px;margin:2px 0 0}}
+
+/* Keep each field close to its label; draw only the chosen background color. */
+.comp-settings-grid{column-gap:9px}.comp-settings-grid label{gap:5px}.comp-settings-grid label>input,.comp-settings-grid label>select{margin-left:0}.comp-settings-grid .setting-scale label:after{display:none}.comp-settings-grid .setting-background>label{flex:0 0 auto}.comp-settings-grid #compBackground{margin-right:0;padding:0;border:0;background:transparent;appearance:none;-webkit-appearance:none;cursor:pointer}.comp-settings-grid #compBackground::-webkit-color-swatch-wrapper{padding:0}.comp-settings-grid #compBackground::-webkit-color-swatch{border:0;border-radius:0}.comp-settings-grid #compBackground::-moz-color-swatch{border:0}@media(max-width:450px){.comp-settings-grid>div{display:grid;grid-template-columns:125px minmax(0,1fr);gap:7px}.comp-settings-grid>div:not(.setting-background){display:block}.comp-settings-grid>div:not(.setting-background)>label{display:grid;grid-template-columns:125px 45px auto;justify-content:start;gap:7px}.comp-settings-grid .setting-background>label{display:block;width:auto}.comp-settings-grid #compBackground{margin:0}}
+
+/* Fixed label column keeps every control at the same x position. */
+@media(max-width:450px){#app #aePanel .comp-settings-grid>div{display:block;width:100%;min-width:0}#app #aePanel .comp-settings-grid>div:not(.setting-background)>label{display:grid;width:max-content;max-width:100%;grid-template-columns:114px 45px auto;justify-content:start;justify-items:start;align-items:center;column-gap:7px}#app #aePanel .comp-settings-grid label>input,#app #aePanel .comp-settings-grid label>select{margin:0;width:45px;min-width:45px;justify-self:start}#app #aePanel .comp-settings-grid>.setting-background{display:grid;grid-template-columns:114px 45px;justify-content:start;justify-items:start;align-items:center;column-gap:7px}#app #aePanel .comp-settings-grid .setting-background>label{display:block;width:auto;margin:0}#app #aePanel .comp-settings-grid #compBackground{width:45px;margin:0;justify-self:start}}
+
+/* Center the visible icon + label group, rather than padded SVG canvases. */
+#app #aePanel .grid button{display:flex;align-items:center;justify-content:center;gap:6px}#app #aePanel .grid button .action-icon,#app #aePanel .grid button>svg{flex:0 0 22px;width:22px;height:22px}#app #aePanel .grid button .action-text{flex:0 1 auto;width:auto;height:29px;max-width:calc(100% - 30px);object-fit:contain;object-position:center}.host-ai #aiPanel section{border-top:0}.host-ai #aiPanel .ai-section-title{color:#29abe2}.host-ai #aiPanel .ai-folder{display:none}
+
+/* Consistent field columns and a native color picker button. */
+#app #aePanel .comp-settings-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 90px;column-gap:12px}#app #aePanel .comp-settings-grid>div{display:block;min-width:0}#app #aePanel .comp-settings-grid>div:not(.setting-background)>label{display:grid;grid-template-columns:105px 45px auto;gap:6px;align-items:center;justify-content:start;width:max-content;max-width:100%}#app #aePanel .comp-settings-grid>.setting-background{display:grid;grid-template-columns:105px 45px;gap:6px;align-items:center;justify-content:start}#app #aePanel .comp-settings-grid label>input,#app #aePanel .comp-settings-grid label>select{margin:0;justify-self:start}#app #aePanel .comp-settings-grid .setting-scale label:after{display:none}#app #aePanel .comp-settings-grid select,#app #aePanel .comp-settings-grid input[type=number],#app #aePanel .comp-settings-grid #compBackground{width:45px;min-width:45px;height:26px;margin:0;border:1px solid #666;border-radius:2px;box-shadow:none}#app #aePanel .comp-settings-grid #compBackground{display:block;padding:0;cursor:pointer;background:#000}#compBackground .color-swatch{display:none}#app #aePanel .comp-settings-grid #applyComp{width:90px;min-height:61px;height:100%;font-weight:700}@media(max-width:499px){#app #aePanel .comp-settings-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"scale" "fps" "duration" "background" "apply"}#app #aePanel .comp-settings-grid #applyComp{width:100%;height:29px;min-height:29px;margin-top:2px}}
+
+#app #aePanel .grid button .plain-label{font:400 12px Arial,sans-serif;color:#ccc}
+
+#app #aePanel .grid .action-text{filter:none}#app #aePanel .grid .plain-label{font-weight:700}
+
+#app .comp-modes #pushFromFigma{width:29px;min-width:29px;flex:0 0 29px;padding:4px;background:#2d2d2d;border:0;opacity:1}#pushFromFigma svg{width:14px;height:21px}#app .comp-modes{flex-wrap:wrap}
+
+/* Compact Illustrator section spacing while preserving responsive button sizes. */
+.host-ai #app{padding-top:12px;padding-bottom:6px}
+.host-ai #aiPanel section{margin-top:10px;padding-top:4px}
+.host-ai #aiPanel .ai-section-title{margin-bottom:6px}
+.host-ai .ai-composition .hint{margin-top:6px}
+.host-ai .panel-footer{margin-top:6px}
+
+/* Figma action beside New Comp, matching the Illustrator action palette. */
+#app .comp-modes #pushFromFigma{width:auto;min-width:0;flex:0 0 auto;padding:0 8px;gap:6px;background:#2d2d2d;color:#ccc;font:700 11px Arial,sans-serif;opacity:1}
+#app .comp-modes #pushFromFigma svg{flex:0 0 12px;width:12px;height:18px}
+
+/* Four composition actions: two columns, stacking when the panel is narrow. */
+#app #aePanel .comp-modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;width:100%;max-width:400px;margin-left:auto;margin-right:auto}
+#app #aePanel .comp-modes button,#app #aePanel .comp-modes #pushFromFigma{width:100%;min-width:0;height:29px;margin:0;justify-content:center}
+#app #aePanel .comp-modes #applyComp{background:#f7931e;color:#ccc;opacity:1;border-color:transparent;padding:0 8px}
+#app #aePanel .comp-settings-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"scale duration" "fps background"}
+@media(max-width:499px){#app #aePanel .comp-settings-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"scale" "fps" "duration" "background"}}
+@media(max-width:300px){#app #aePanel .comp-modes{grid-template-columns:minmax(0,1fr)}}
+
+/* Neutral composition mode buttons, with strong, readable symbols. */
+#app #aePanel .comp-modes #figmaNew,#app #aePanel .comp-modes #figmaCurrent{background:#2d2d2d;color:#ccc}
+#app #aePanel .comp-modes .mode-icon{width:18px;height:18px;flex:0 0 18px;color:#ccc}
+
+/* One continuous action block, with no section headings or divider. */
+#app #aePanel .combined-actions{border-top:0;padding-top:0}
+
+/* Subtle selected mode outline and image destination below import options. */
+#app .comp-modes button.active{border-color:#414141}
+#app #aePanel .checks{margin-bottom:10px}
+#app #aePanel .checks+.label{margin-top:0}
+
+#app #aePanel .comp-settings-grid #compBackground{border:1px solid #414141}
+
+/* Blue Figma action and an angular Apply confirmation mark. */
+#app #aePanel .comp-modes #pushFromFigma{background:#29abe2;color:#ccc}
+#app #aePanel .comp-modes #pushFromFigma svg path{fill:#ccc}
+#app #aePanel .comp-modes #applyComp .apply-icon{width:18px;height:18px;flex:0 0 18px}
+
+#app #aePanel .comp-modes #pushFromFigma,#app #aePanel .comp-modes #applyComp{color:#fff}
+#app #aePanel .comp-modes #pushFromFigma svg path{fill:#fff}
+
+/* Import option checkboxes follow the panel palette. */
+#app #aePanel .checks input[type=checkbox]{appearance:none;-webkit-appearance:none;position:relative;display:inline-block;flex:0 0 12px;width:12px;height:12px;margin:0;border:1px solid #666;border-radius:2px;background:#232323;cursor:pointer;vertical-align:middle}
+#app #aePanel .checks input[type=checkbox]:checked:after{content:"";position:absolute;left:3px;top:0px;width:3px;height:6px;border:solid #f7931e;border-width:0 2px 2px 0;transform:rotate(45deg)}
+#app #aePanel .checks input[type=checkbox]:focus-visible{outline:1px solid #999;outline-offset:2px}
+
+/* Inline image destination label, flexible path and two trailing controls. */
+#app #aePanel .folderrow{align-items:center}
+#app #aePanel .folderrow .folder-label{flex:0 0 auto;white-space:nowrap;font:11px Arial,sans-serif;color:#aaa;margin-right:4px}
+#app #aePanel .folderrow>div{flex:1 1 0;min-width:0}
+
+/* Top actions use the same available width and column breakpoint as the lower block. */
+#app #aePanel .comp-modes{max-width:none;width:100%;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:420px){#app #aePanel .comp-modes{grid-template-columns:minmax(0,1fr)}}
+
+/* Keep settings in two columns whenever both aligned field groups fit. */
+#app #aePanel .comp-settings-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"scale duration" "fps background";column-gap:12px}
+#app #aePanel .comp-settings-grid>div:not(.setting-background)>label{grid-template-columns:105px 45px auto;column-gap:6px}
+#app #aePanel .comp-settings-grid>.setting-background{grid-template-columns:105px 45px;column-gap:6px}
+@media(max-width:399px){#app #aePanel .comp-settings-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"scale" "fps" "duration" "background"}}
+
+#app #aePanel .comp-settings-grid>div:not(.setting-background)>label{grid-template-columns:105px 45px}
+
+/* Compact sentence-case options, separated from composition settings. */
+#app #aePanel .comp-settings-grid{margin-bottom:0}
+#app #aePanel .checks{margin-top:10px;padding-top:10px;border-top:1px solid #363636;gap:6px 10px;margin-bottom:10px}
+#app #aePanel .checks label{font-size:11px;line-height:1.35;color:#b8b8b8;gap:5px}
+
+/* Neutral action backgrounds with semantic foreground colors. */
+#app #aePanel .comp-modes #pushFromFigma{background:#2d2d2d;color:#29abe2}
+#app #aePanel .comp-modes #pushFromFigma svg path{fill:#29abe2}
+#app #aePanel .comp-modes #applyComp{background:#2d2d2d;color:#f7931e}
+
+/* 0.7 paired actions: each row names its source and destination. */
+#app #aePanel .combined-actions .grid button{order:0;height:100%;min-height:32px}
+#app #aePanel .combined-actions #pushFromFigma{background:#2d2d2d;color:#29abe2;opacity:1;border:0}
+#app #aePanel .combined-actions #pushFromFigma strong{font:700 12px Arial,sans-serif}
+#app #aePanel .combined-actions #pushFromFigma svg{width:15px;height:22px;flex-basis:15px}
+#app #aePanel .combined-actions #pushFromFigma svg path{fill:#29abe2}
+#app #aePanel .combined-actions #pushFromPS,#app #aePanel .combined-actions #importGuidesPS{color:#29abe2}
+#app #aePanel .combined-actions #pushGuidesPS{color:#f7931e}
+#app #aePanel .comp-modes{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:420px){#app #aePanel .comp-modes{grid-template-columns:minmax(0,1fr)}}
+
+/* 0.7 compact actions: three columns, then two and one as space narrows. */
+#app #aePanel .combined-actions{flex:0 0 auto}
+#app #aePanel .combined-actions .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(38px,auto);gap:4px}
+#app #aePanel .combined-actions .grid button{order:0;min-width:0;min-height:38px;height:auto;padding:5px 6px;display:flex;align-items:center;justify-content:center;gap:5px}
+#app #aePanel .combined-actions .grid button .action-icon,
+#app #aePanel .combined-actions .grid button>svg{width:19px;height:19px;flex:0 0 19px}
+#app #aePanel .combined-actions .grid button .plain-label,
+#app #aePanel .combined-actions #pushFromFigma strong{font:700 10px/1.25 Arial,sans-serif;white-space:normal;text-align:center;min-width:0}
+@media(max-width:559px){#app #aePanel .combined-actions .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:339px){#app #aePanel .combined-actions .grid{grid-template-columns:minmax(0,1fr)}}

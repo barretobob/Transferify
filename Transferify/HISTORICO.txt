@@ -1,0 +1,17 @@
+Transferify — histórico público
+
+0.8.4 — 24/11/2026
+- Engrenagem com Update e Reload no After, Illustrator e Figma.
+- Atualização via GitHub com verificação de integridade e backup.
+- Gradientes: identificação da camada copiada por ID; remoção da geometria auxiliar do template.
+
+0.8.3
+- Pasta IMAGENS relativa ao projeto como padrão, com escolha manual preservada.
+
+0.8.2
+- Correção de frames do Figma com imagem no preenchimento.
+
+0.8.1
+- Quadro atual de vídeo no tamanho original e sólido com máscara como clipping no Illustrator.
+
+Distribuição de testes. Windows e integração Photoshop ainda em validação.

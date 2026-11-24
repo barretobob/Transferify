@@ -1,0 +1,24 @@
+const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),assert=require('node:assert/strict'),crypto=require('node:crypto'),vm=require('node:vm'),http=require('node:http');
+const root=path.resolve(__dirname,'../Transferify'),up=require(root+'/js/updater.js'),tmp=fs.mkdtempSync(path.join(os.tmpdir(),'transferify-updater-test-'));
+function walk(dir,prefix=''){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(dir,e.name),prefix+e.name+'/'):[prefix+e.name]);}
+const files=walk(root).filter(p=>!p.startsWith('.')).map(p=>{let b=fs.readFileSync(path.join(root,p));return {path:p,data:b.toString('base64'),sha256:crypto.createHash('sha256').update(b).digest('hex')};});
+const pkg={format:1,version:'0.8.4',files};
+assert.ok(up.newer('0.8.10','0.8.9'));assert.ok(!up.newer('0.8.4','0.8.4'));assert.throws(()=>up.newer('../','0.8.4'));
+assert.equal(up.validate(pkg,'0.8.3').length,files.length);
+for(const badPath of ['../outside','/absolute','a/../../bad','A\\evil','C:/evil','a//bad','a/./bad'])assert.throws(()=>up.validate({...pkg,files:[...files,{...files[0],path:badPath}]},'0.8.3'));
+assert.throws(()=>up.validate({...pkg,files:[...files,{...files[0],path:files[0].path.toUpperCase()}]},'0.8.3'),/duplicado/);
+assert.throws(()=>up.validate({...pkg,files:files.map((f,i)=>i?f:{...f,sha256:'0'.repeat(64)})},'0.8.3'),/Integridade/);
+assert.throws(()=>up.validate({...pkg,files:files.filter(f=>f.path!=='jsx/host.jsx')},'0.8.3'),/incompleto/);
+assert.throws(()=>up.validate(pkg,'0.8.4'));
+// Real filesystem transaction; backup goes to an isolated fake home.
+const originalHome=os.homedir;os.homedir=()=>tmp;const installRoot=path.join(tmp,'CEP','Transferify');fs.mkdirSync(installRoot,{recursive:true});fs.writeFileSync(installRoot+'/old.txt','previous');
+let backup=up.install(installRoot,pkg,'0.8.3');assert.equal(fs.readFileSync(backup+'/old.txt','utf8'),'previous');assert.equal(fs.readFileSync(installRoot+'/jsx/host.jsx','utf8'),fs.readFileSync(root+'/jsx/host.jsx','utf8'));
+// Failed final swap rolls the installation back; staged directories are removed.
+const rename=fs.renameSync;let failed=false;fs.renameSync=function(a,b){if(!failed&&path.basename(a).startsWith('.transferify-stage-')){failed=true;throw Error('Simulated final rename failure');}return rename(a,b);};
+assert.throws(()=>up.install(installRoot,pkg,'0.8.3'),/Simulated/);assert.ok(fs.existsSync(installRoot+'/jsx/host.jsx'));assert.ok(!fs.readdirSync(path.dirname(installRoot)).some(p=>p.startsWith('.transferify-stage-')));fs.renameSync=rename;os.homedir=originalHome;
+// Parse every shipped JS/JSX and inline script, and verify menu controls.
+for(const f of walk(root).filter(f=>/\.(js|jsx)$/.test(f)))new vm.Script(fs.readFileSync(path.join(root,f),'utf8'),{filename:f});
+for(const f of ['index.html','figma-plugin/ui.html']){const html=fs.readFileSync(root+'/'+f,'utf8');for(const m of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))if(m[1].trim())new vm.Script(m[1],{filename:f});for(const id of ['settingsToggle','settingsMenu','updatePlugin'])assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1);assert.ok(html.includes('v0.8.4'));}
+// Real HTTP bridge: update requires session auth, succeeds, and refuses busy requests.
+async function request(method,url,headers={}){return new Promise((resolve,reject)=>{const r=http.request('http://127.0.0.1:17864'+url,{method,headers:{Host:'localhost:17860',...headers}},res=>{let body='';res.on('data',b=>body+=b);res.on('end',()=>resolve({status:res.statusCode,body:body?JSON.parse(body):null}));});r.on('error',reject);r.end();});}
+(async()=>{const originalListen=http.Server.prototype.listen;http.Server.prototype.listen=function(port,...args){return originalListen.call(this,port===17860?17864:port,...args);};const bridge=require(root+'/js/figma-bridge.js');let busy=false,updates=0;const server=await new Promise((resolve,reject)=>{let s=bridge.start({assetDir:root+'/assets',isBusy:()=>busy,update:done=>{updates++;done({ok:true,message:'test update'});}},e=>e?reject(e):resolve(s));});try{assert.equal((await request('POST','/update')).status,401);const key=fs.readFileSync(root+'/assets/figma-client-id.txt','utf8').trim();const session=await request('GET','/session',{'X-Transferify-Client':key});const headers={Authorization:'Bearer '+session.body.token};assert.equal((await request('POST','/update',headers)).status,200);assert.equal(updates,1);busy=true;assert.equal((await request('POST','/update',headers)).status,409);assert.equal(updates,1);}finally{await new Promise(resolve=>server.close(resolve));fs.rmSync(tmp,{recursive:true,force:true});}console.log('PASS version ordering, integrity, path traversal/duplicate/incomplete rejection, actual install+backup+rollback, shipped syntax/menus and authenticated/busy HTTP update route.');})().catch(e=>{console.error(e);process.exitCode=1;});
