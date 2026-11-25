@@ -21,6 +21,8 @@ jobs:
           python-version: '3.x'
       - name: Test updater and gradient copy
         run: |
+          node tests/test-svg-cleanup.cjs
+          node tests/test-independent.cjs
           node tests/test-gradient-copy.cjs
           node tests/test-updater.cjs
       - name: Build release assets

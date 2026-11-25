@@ -1,5 +1,14 @@
 Transferify — histórico público
 
+0.8.5 — 25/11/2026
+- Figma ↔ Illustrator direto, sem abrir ou usar o After.
+- Receptores independentes: Illustrator 17861 e After 17860, com sessões separadas.
+- Exportação e importação locais no próprio painel Illustrator, por arquivos temporários.
+- SVGs grandes são lidos por arquivo nativo, sem expandir imagens em hex no ExtendScript.
+- Remove patterns e imagens de definição sem uso, preservando os pixels dos recursos usados.
+- Erros de conexão identificam o aplicativo necessário, em vez de mostrar apenas Failed to fetch.
+- Update no Figma pode usar um painel Illustrator aberto.
+
 0.8.4 — 24/11/2026
 - Engrenagem com Update e Reload no After, Illustrator e Figma.
 - Atualização via GitHub com verificação de integridade e backup.
@@ -15,3 +24,5 @@ Transferify — histórico público
 - Quadro atual de vídeo no tamanho original e sólido com máscara como clipping no Illustrator.
 
 Distribuição de testes. Windows e integração Photoshop ainda em validação.
+
+Na importação Figma → Illustrator, o Frame original define o artboard. O recorte externo é removido apenas quando identificado pela raiz exportada e metadados de Frame; máscaras internas são mantidas. O transporte direto usa SVG em arquivo nos dois sentidos.

@@ -1,13 +1,13 @@
 /* SVG transport for Figma <-> Illustrator. Development, no startup actions. */
 Transferify._receiveFigmaSVG=function(pack){
- var source=null,original=null,destinationLayer=null,created=[],unownedCopies=[],files=[],stage="start",oldInteraction=app.userInteractionLevel;
+ var source=null,original=null,destinationLayer=null,created=[],unownedCopies=[],files=[],addedBoards=[],boardBefore=null,stage="start",oldInteraction=app.userInteractionLevel;
  try{
   app.userInteractionLevel=UserInteractionLevel.DONTDISPLAYALERTS;
   if(!app.documents.length)throw Error('Open the destination Illustrator document first.');
   stage="destination";original=app.activeDocument;var ab=original.artboards[original.artboards.getActiveArtboardIndex()].artboardRect;destinationLayer=original.layers.add();destinationLayer.name='Transferify - Figma';destinationLayer.visible=true;destinationLayer.locked=false;original.activeLayer=destinationLayer;
   for(var i=0;i<pack.items.length;i++){
-   var item=pack.items[i],file=new File(Folder.temp.fsName+'/transferify-figma-'+new Date().getTime()+'-'+i+'.svg');files.push(file);
-   file.encoding='UTF-8';if(!file.open('w'))throw Error('Cannot write SVG transport.');file.write(item.svg);file.close();
+   var item=pack.items[i];if(item.frame&&item.frame.type=='FRAME'&&item.frame.nodeId){stage="Frame artboard";if(!boardBefore){var activeBoard=original.artboards.getActiveArtboardIndex();boardBefore={index:activeBoard,rect:original.artboards[activeBoard].artboardRect,name:original.artboards[activeBoard].name};}var frameRect=[ab[0]+item.x,ab[1]-item.y,ab[0]+item.x+item.frame.width,ab[1]-item.y-item.frame.height];if(i===0){original.artboards[original.artboards.getActiveArtboardIndex()].artboardRect=frameRect;original.artboards[original.artboards.getActiveArtboardIndex()].name=item.name;}else{var frameBoard=original.artboards.add(frameRect);addedBoards.push(frameBoard);frameBoard.name=item.name;}}var file=item.file?new File(item.file):new File(Folder.temp.fsName+'/transferify-figma-'+new Date().getTime()+'-'+i+'.svg');files.push(file);
+   if(item.file){if(!file.exists)throw Error('SVG transport file is missing.');}else{file.encoding='UTF-8';if(!file.open('w'))throw Error('Cannot write SVG transport.');file.write(item.svg);file.close();}
    stage="open SVG";source=app.open(file);var rect=source.artboards[0].artboardRect,top=[];
    for(var j=0;j<source.pageItems.length;j++)if(source.pageItems[j].parent.typename=='Layer')top.push(source.pageItems[j]);
    var sourceLeft=Infinity,sourceTop=-Infinity;for(var bi=0;bi<top.length;bi++){var bb=top[bi].geometricBounds;sourceLeft=Math.min(sourceLeft,bb[0]);sourceTop=Math.max(sourceTop,bb[1]);}if(!top.length)throw Error("SVG has no drawable roots");stage="duplicate artwork";app.activeDocument=original;var targetLayer=destinationLayer,copies=[];
@@ -18,8 +18,8 @@ Transferify._receiveFigmaSVG=function(pack){
    app.activeDocument=source;source.close(SaveOptions.DONOTSAVECHANGES);source=null;app.activeDocument=original;
   }
   app.activeDocument=original;original.selection=null;for(var i=0;i<created.length;i++)created[i].selected=true;
-  return 'FIGMA → AI • '+created.length+' selection roots imported as editable SVG artwork';
- }catch(e){for(var i=created.length-1;i>=0;i--)try{created[i].remove();}catch(_cleanup){}for(var i=unownedCopies.length-1;i>=0;i--)try{unownedCopies[i].remove();}catch(_copyCleanup){}if(destinationLayer)try{if(!destinationLayer.pageItems.length)destinationLayer.remove();}catch(_emptyLayer){}return 'ERROR: '+String(e)+' | stage '+stage+' | line '+e.line;}
+  return 'FIGMA \u2192 AI \u2022 '+created.length+' selection roots imported as editable SVG artwork';
+ }catch(e){for(var ai=addedBoards.length-1;ai>=0;ai--)try{addedBoards[ai].remove();}catch(_boardCleanup){}if(boardBefore)try{original.artboards[boardBefore.index].artboardRect=boardBefore.rect;original.artboards[boardBefore.index].name=boardBefore.name;}catch(_boardRestore){}for(var i=created.length-1;i>=0;i--)try{created[i].remove();}catch(_cleanup){}for(var i=unownedCopies.length-1;i>=0;i--)try{unownedCopies[i].remove();}catch(_copyCleanup){}if(destinationLayer)try{if(!destinationLayer.pageItems.length)destinationLayer.remove();}catch(_emptyLayer){}return 'ERROR: '+String(e)+' | stage '+stage+' | line '+e.line;}
  finally{if(source)try{source.close(SaveOptions.DONOTSAVECHANGES);}catch(_close){}if(original)try{app.activeDocument=original;}catch(_restore){}for(var i=0;i<files.length;i++)try{files[i].remove();}catch(_remove){}app.userInteractionLevel=oldInteraction;}
 };
 Transferify.sendFigmaSVGToAI=function(raw){
@@ -39,7 +39,7 @@ Transferify.sendFigmaSVGToAI=function(raw){
   if(bt.send())return 'PENDING';release();return 'ERROR: Illustrator request failed.';
  }catch(e){return 'ERROR: '+String(e);}
 };
-Transferify._exportAISVG=function(){
+Transferify._exportAISVG=function(outputSVGPath){
  var original=null,temporary=null,file=null,stage="selection",oldInteraction=app.userInteractionLevel;
  try{
   app.userInteractionLevel=UserInteractionLevel.DONTDISPLAYALERTS;
@@ -59,10 +59,10 @@ Transferify._exportAISVG=function(){
   
   stage="copy artwork";var copiedLeft=Infinity,copiedTop=-Infinity;for(var i=0;i<roots.length;i++){var duplicate=roots[i].duplicate(temporary.activeLayer,ElementPlacement.PLACEATEND),copyBounds=duplicate.visibleBounds;copiedLeft=Math.min(copiedLeft,copyBounds[0]);copiedTop=Math.max(copiedTop,copyBounds[1]);}temporary.artboards[0].artboardRect=[copiedLeft,copiedTop,copiedLeft+width,copiedTop-height];
   var options=new ExportOptionsSVG();options.documentEncoding=SVGDocumentEncoding.UTF8;options.embedRasterImages=true;options.fontType=SVGFontType.OUTLINEFONT;options.coordinatePrecision=5;
-  stage="export SVG";file=new File(Folder.temp.fsName+'/transferify-ai-'+new Date().getTime()+'.svg');temporary.exportFile(file,ExportType.SVG,options);
-  stage="read SVG";file.encoding='UTF-8';if(!file.open('r'))throw Error('Cannot read Illustrator SVG export.');var svg=file.read();file.close();
-  return {name:roots.length==1?String(roots[0].name||'Illustrator selection'):'Illustrator selection',svg:svg,width:width,height:height,warnings:['Illustrator text is outlined during SVG transfer to Figma. Inspect effects and clipping.']};
- }catch(e){throw Error('Illustrator SVG export failed at '+stage+': '+String(e)+' | line '+e.line);}finally{stage="restore source";if(original)try{app.activeDocument=original;}catch(_restore){}stage="close temporary";if(temporary)try{temporary.close(SaveOptions.DONOTSAVECHANGES);}catch(_close){}stage="cleanup SVG";if(file)try{file.remove();}catch(_remove){}app.userInteractionLevel=oldInteraction;}
+  stage="export SVG";file=new File(outputSVGPath||Folder.temp.fsName+'/transferify-ai-'+new Date().getTime()+'.svg');temporary.exportFile(file,ExportType.SVG,options);
+  stage="read SVG";var svg=null;if(!outputSVGPath){file.encoding='UTF-8';if(!file.open('r'))throw Error('Cannot read Illustrator SVG export.');svg=file.read();file.close();}
+  return {name:roots.length==1?String(roots[0].name||'Illustrator selection'):'Illustrator selection',svg:svg,svgFile:outputSVGPath?file.fsName:null,width:width,height:height,warnings:['Illustrator text is outlined during SVG transfer to Figma. Inspect effects and clipping.']};
+ }catch(e){throw Error('Illustrator SVG export failed at '+stage+': '+String(e)+' | line '+e.line);}finally{stage="restore source";if(original)try{app.activeDocument=original;}catch(_restore){}stage="close temporary";if(temporary)try{temporary.close(SaveOptions.DONOTSAVECHANGES);}catch(_close){}stage="cleanup SVG";if(file&&!outputSVGPath)try{file.remove();}catch(_remove){}app.userInteractionLevel=oldInteraction;}
 };
 Transferify.requestAISVG=function(){
  try{
@@ -76,4 +76,21 @@ Transferify.requestAISVG=function(){
   bt.onError=function(r){release();Transferify._lastAISVGResult={ok:false,message:String(r.body)};};
   return bt.send()?'PENDING':'ERROR: Illustrator request failed.';
  }catch(e){return 'ERROR: '+String(e);}
+};
+
+// Direct entry points: called by this Illustrator panel's local receiver.
+Transferify.importFigmaSVGFile=function(filePath){
+ try{
+  if(Transferify._host()!='ai')throw Error('Abra o painel Transferify no Illustrator.');
+  var file=new File(filePath);file.encoding='BINARY';if(!file.open('r'))throw Error('Não foi possível ler o pacote do Figma.');var raw;try{raw=file.read();}finally{file.close();}
+  var result=Transferify._receiveFigmaSVG(Transferify._decodePayload(raw));
+  return Transferify._plainJSON({ok:String(result).indexOf('ERROR:')!==0,message:String(result)});
+ }catch(error){return Transferify._plainJSON({ok:false,message:String(error)});}
+};
+Transferify.exportAISVGFile=function(filePath){
+ var file=null;
+ try{
+  if(Transferify._host()!='ai')throw Error('Abra o painel Transferify no Illustrator.');
+  var data=Transferify._exportAISVG(filePath+'.svg');file=new File(filePath);file.encoding='UTF-8';if(!file.open('w'))throw Error('Não foi possível gravar a exportação do Illustrator.');try{file.write(Transferify._plainJSON(data));}finally{file.close();}return 'OK';
+ }catch(error){if(file)try{file.remove();}catch(_){}return 'ERROR: '+String(error);}
 };

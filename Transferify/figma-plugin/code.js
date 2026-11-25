@@ -135,7 +135,7 @@ async function exportIllustratorSelection(options){
  const ids=new Set(selected.map(n=>n.id)),roots=selected.filter(n=>{let p=n.parent;while(p){if(ids.has(p.id))return false;p=p.parent;}return true;});
  roots.sort(selectedPaintOrder);selectedBudget(roots);
  const bounds=roots.map(n=>n.absoluteRenderBounds||n.absoluteBoundingBox),left=Math.min(...bounds.map(b=>b.x)),top=Math.min(...bounds.map(b=>b.y)),items=[];
- for(let i=0;i<roots.length;i++){const node=roots[i],svg=await node.exportAsync({format:'SVG_STRING',svgOutlineText:false,svgIdAttribute:true});items.push({name:node.name,x:bounds[i].x-left,y:bounds[i].y-top,svg});}
+ for(let i=0;i<roots.length;i++){const node=roots[i],svg=await node.exportAsync({format:'SVG_STRING',svgOutlineText:false,svgIdAttribute:true});items.push({name:node.name,x:bounds[i].x-left,y:bounds[i].y-top,svg,frame:node.type==='FRAME'?{nodeId:node.id,type:node.type,width:node.width,height:node.height,clipsContent:node.clipsContent}:null});}
  return {protocol:'transferify-figma-svg',version:1,items};
 }
 figma.ui.onmessage=async msg=>{try{

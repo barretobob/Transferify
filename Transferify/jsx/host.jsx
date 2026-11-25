@@ -1810,7 +1810,7 @@ Transferify.sendToAI=function(){
       packet.remove();
       return "ERROR • AI not reachable";
     }
-    return "SEND TO AI • 0.8.4 • awaiting Illustrator";
+    return "SEND TO AI • 0.8.5 • awaiting Illustrator";
   }catch(e){return "ERROR "+e.number+": "+e.message+" line "+e.line;}
 };
 

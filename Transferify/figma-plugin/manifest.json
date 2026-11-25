@@ -1,5 +1,5 @@
 {
-  "name": "Transferify 0.8.4",
+  "name": "Transferify 0.8.5",
   "api": "1.0.0",
   "main": "code.js",
   "ui": "ui.html",
@@ -12,8 +12,9 @@
       "none"
     ],
     "devAllowedDomains": [
-      "http://localhost:17860/"
+      "http://localhost:17860/",
+      "http://localhost:17861/"
     ],
-    "reasoning": "Send selected artwork only to the user's local Transferify After Effects panel."
+    "reasoning": "Transfer artwork directly to the selected local Adobe app: After Effects or Illustrator."
   }
 }

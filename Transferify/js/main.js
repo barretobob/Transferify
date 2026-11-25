@@ -84,11 +84,12 @@
   var figmaServer=null;
   function startReceiver(){
     if(figmaServer)return;
-    try{var nodeRequire=typeof require==='function'?require:window.cep_node.require,root=cs.getSystemPath(SystemPath.EXTENSION),bridgePath=root+'/js/figma-bridge.js';if(nodeRequire.cache&&nodeRequire.resolve){delete nodeRequire.cache[nodeRequire.resolve(bridgePath)];delete nodeRequire.cache[nodeRequire.resolve(root+'/js/figma-normalize.js')];}var bridge=nodeRequire(bridgePath);
+    try{var nodeRequire=typeof require==='function'?require:window.cep_node.require,root=cs.getSystemPath(SystemPath.EXTENSION),bridgePath=root+'/js/figma-bridge.js';if(nodeRequire.cache&&nodeRequire.resolve){delete nodeRequire.cache[nodeRequire.resolve(bridgePath)];delete nodeRequire.cache[nodeRequire.resolve(root+'/js/figma-normalize.js')];delete nodeRequire.cache[nodeRequire.resolve(root+'/js/svg-transport.js')];delete nodeRequire.cache[nodeRequire.resolve(root+'/js/illustrator-direct.js')];}var bridge=nodeRequire(bridgePath);
       function loadNative(script,callback){cs.evalScript('$.evalFile(new File('+JSON.stringify(root+'/jsx/host.jsx')+'));'+script,callback);}
       function waitNativeResult(key,callback){var start=Date.now();function poll(){cs.evalScript('Transferify.'+key+'?Transferify._plainJSON(Transferify.'+key+'):"PENDING"',function(value){if(value==='PENDING'&&Date.now()-start<90000){setTimeout(poll,200);return;}try{callback(JSON.parse(value));}catch(e){callback({ok:false,message:'Destination timed out. Check the destination before retrying.'});}});}poll();}
-      figmaServer=bridge.start({assetDir:root+'/assets',update:updateTransferify,exportIllustrator:function(done){setBusy(true,'EXPORTING FROM ILLUSTRATOR…');loadNative('Transferify.requestAISVG()',function(result){if(result!=='PENDING'){setBusy(false);return done({ok:false,message:result});}waitNativeResult('_lastAISVGResult',function(result){setBusy(false);status(result.ok?'ILLUSTRATOR → FIGMA • selection exported':result.message||'Illustrator export failed');done(result);});});},activate:function(done){cs.evalScript('(function(){try{BridgeTalk.bringToFront(BridgeTalk.appName);return "OK";}catch(e){return "ERROR: "+String(e);}})()',function(r){done(r==='OK'?null:r||'After did not respond');});},isBusy:function(){return busy;},importer:function(data,done){
-        if(data.protocol==='transferify-figma-svg'){setBusy(true,'SENDING TO ILLUSTRATOR…');loadNative('Transferify.sendFigmaSVGToAI('+JSON.stringify(JSON.stringify(data))+')',function(result){if(result!=='PENDING'){setBusy(false);return done({ok:false,message:result});}waitNativeResult('_lastFigmaAIResult',function(result){setBusy(false);status(result.message);done(result);});});return;}
+      var aiDirect=h==='ai'?nodeRequire(root+'/js/illustrator-direct.js').create({hostFile:root+'/jsx/host.jsx',evalScript:function(script,done){cs.evalScript(script,done);},busy:function(value,message){setBusy(value,message);}}):null;
+      figmaServer=bridge.start({host:h,assetDir:root+'/assets',update:updateTransferify,exportIllustrator:aiDirect?aiDirect.exportIllustrator:null,activate:function(done){cs.evalScript('(function(){try{BridgeTalk.bringToFront(BridgeTalk.appName);return "OK";}catch(e){return "ERROR: "+String(e);}})()',function(r){done(r==='OK'?null:r||'After did not respond');});},isBusy:function(){return busy;},importer:function(data,done){
+        if(h==='ai'){aiDirect.importer(data,done);return;}
         var requestedMode=data.compMode,precompGroups=data.precompGroups===true;data.importOptions=figmaOptions();data.importOptions.precompGroups=precompGroups;if(requestedMode==='new'||requestedMode==='current')data.importOptions.mode=requestedMode;data.matchFigmaAlpha=$('figmaMatchAlpha').checked;setBusy(true,'IMPORTING FROM FIGMA…');
         var fs=nodeRequire('fs'),path=nodeRequire('path'),os=nodeRequire('os'),tempDir=null;
         function finish(result){setBusy(false);if(tempDir)try{fs.rmSync(tempDir,{recursive:true,force:true});}catch(ignore){}status(result.message+(result.warnings&&result.warnings.length?' • '+result.warnings.join(' | '):''));done(result);}
@@ -104,7 +105,7 @@
           }});
         }catch(e){finish({ok:false,message:'Falha ao preparar envio ao After: '+String(e.message||e)});}
 
-      }},function(error){if(error){figmaServer=null;$('connectionState').textContent='Connection: '+error.message;status('Connection: '+error.message);return;}$('connectionState').textContent='Automatic connection active · Figma and Illustrator settings shared.';$('figmaPause').textContent='Pause receiver';status('READY · FIGMA CONNECTED');});
+      }},function(error){if(error){figmaServer=null;$('connectionState').textContent='Connection: '+error.message;status('Connection: '+error.message);return;}$('connectionState').textContent='Direct Figma connection active · '+(h==='ai'?'Illustrator':'After Effects');$('figmaPause').textContent='Pause receiver';status('READY · FIGMA CONNECTED');});
     }catch(e){figmaServer=null;status('Connection: '+e.message);}
   }
   $('figmaReconnect').onclick=function(){if(figmaServer){var old=figmaServer;figmaServer=null;old.close(startReceiver);}else startReceiver();};
@@ -114,7 +115,7 @@
   function updateTransferify(done){
     if(busy){if(done)done({ok:false,message:'Transferify ocupado. Aguarde a transferência terminar.'});return;}
     setBusy(true,'CHECKING FOR UPDATES…');
-    try{var nr=typeof require==='function'?require:window.cep_node.require,root=cs.getSystemPath(SystemPath.EXTENSION);(function(){var modulePath=root+'/js/updater.js';if(nr.cache&&nr.resolve)delete nr.cache[nr.resolve(modulePath)];return nr(modulePath);})().run(root,'0.8.4').then(function(result){setBusy(false);status(result.message);if(done)done(result);},function(error){var result={ok:false,message:String(error.message||error)};setBusy(false);status(result.message);if(done)done(result);});}catch(error){var result={ok:false,message:String(error.message||error)};setBusy(false);status(result.message);if(done)done(result);}
+    try{var nr=typeof require==='function'?require:window.cep_node.require,root=cs.getSystemPath(SystemPath.EXTENSION);(function(){var modulePath=root+'/js/updater.js';if(nr.cache&&nr.resolve)delete nr.cache[nr.resolve(modulePath)];return nr(modulePath);})().run(root,'0.8.5').then(function(result){setBusy(false);status(result.message);if(done)done(result);},function(error){var result={ok:false,message:String(error.message||error)};setBusy(false);status(result.message);if(done)done(result);});}catch(error){var result={ok:false,message:String(error.message||error)};setBusy(false);status(result.message);if(done)done(result);}
   }
   $('updatePlugin').onclick=function(){$('settingsMenu').hidden=true;$('settingsToggle').setAttribute('aria-expanded','false');updateTransferify();};
   $('reloadPanel').onclick=function(){
@@ -133,6 +134,6 @@
   var hostFile=cs.getSystemPath(SystemPath.EXTENSION)+'/jsx/host.jsx';
   cs.evalScript('(function(){try{$.evalFile(new File('+JSON.stringify(hostFile)+'));return "HOST_READY";}catch(e){return "ERROR: "+String(e);}})()',function(result){
     if(!result||result==='EvalScript error.'||String(result).indexOf('ERROR')===0){status(result||'ERROR: Host script did not load');return;}
-    hostReady=true;status('READY');if(h==='ae')syncOptions(function(){startReceiver();});
+    hostReady=true;status('READY');if(h==='ae')syncOptions(function(){startReceiver();});else startReceiver();
   });
 })();

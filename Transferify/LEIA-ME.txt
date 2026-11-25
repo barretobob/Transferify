@@ -1,7 +1,9 @@
-Transferify 0.8.4 — versão de testes
+Transferify 0.8.5 — versão de testes
 
 Comece por INSTALACAO.md (Mac e Windows).
 Use a pasta CEP do usuário e importe no Figma o manifesto da subpasta figma-plugin dessa instalação permanente.
 As atualizações ficam em engrenagem > Update. Reload também fica na engrenagem.
 Detalhes de recursos e limitações: README.md.
 Windows e Photoshop: validação parcial/pendente, conforme descrito no guia.
+
+Figma ↔ Illustrator é direto: mantenha o painel Transferify no Illustrator aberto. O After não é necessário nesse fluxo.
