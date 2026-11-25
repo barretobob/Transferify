@@ -149,3 +149,9 @@ html,body{min-height:100%;height:100%}#app{min-height:100vh;display:flex;flex-di
 #app #aePanel .combined-actions #pushFromFigma strong{font:700 10px/1.25 Arial,sans-serif;white-space:normal;text-align:center;min-width:0}
 @media(max-width:559px){#app #aePanel .combined-actions .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:339px){#app #aePanel .combined-actions .grid{grid-template-columns:minmax(0,1fr)}}
+
+@font-face{font-family:TransferifyTabs;src:url('assets/georama-bold.ttf') format('truetype');font-weight:700;font-style:normal;font-display:swap}
+.destination-tabs{display:flex;align-items:flex-end;justify-content:center;gap:3px;border-bottom:1px solid #363636;margin:22px 0 12px;min-height:34px;flex-shrink:0}.destination-tabs .destination-tab{flex:1 1 0;max-width:155px;min-width:0;height:28px;margin:0;padding:3px 7px;background:#232323;border:2px solid #ff931e;border-radius:3px 3px 0 0;color:#bfbfbf;font:700 13px TransferifyTabs,Georama,Arial,sans-serif;white-space:nowrap;line-height:1.15}.destination-tabs .destination-tab.active{height:33px;background:#3fa7ef;border-color:#eee;color:#fff;font-size:15px}.destination-tabs .destination-tab:disabled{opacity:.4;cursor:default}.destination-tabs .destination-tab.active:disabled{background:#343434;color:#aaa;border-color:#666}.destination-tabs .destination-tab:focus-visible{outline:2px solid #fff;outline-offset:2px}@media(max-width:280px){.destination-tabs{gap:2px;margin-top:16px}.destination-tabs .destination-tab{padding:3px 4px;font-size:10px}.destination-tabs .destination-tab.active{font-size:11px}}
+[data-peer][hidden]{display:none!important}
+
+@media(max-width:220px){.destination-tabs .destination-tab{padding:3px 2px;font-size:8px}.destination-tabs .destination-tab.active{font-size:9px}}

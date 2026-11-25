@@ -1,4 +1,4 @@
-# Transferify 0.8.6 — versão de testes
+# Transferify 0.8.7 — versão de testes
 
 Transfere artes entre After Effects, Illustrator, Figma e, parcialmente, Photoshop.
 
@@ -17,7 +17,7 @@ O plugin Figma importado de outra pasta, como Downloads, não é atualizado junt
 - Illustrator → After: textos, paths, shapes, gradientes, imagens e guias compatíveis.
 - After → Illustrator: textos, shapes, guias; vídeo vira PNG do quadro atual no tamanho original. Sólido com máscara compatível vira vetor com clipping mask. Feather não é reproduzido nesse clipping.
 - Figma → After: texto e vetores editáveis quando compatíveis, imagens, hierarquia e opções NEW/CURRENT. O fundo do Frame original pode acompanhar o tamanho da comp. Imagens de fundo de containers são enviadas separadamente.
-- Figma ↔ Illustrator: conexão SVG direta com o painel Illustrator; textos no caminho Illustrator → Figma podem ser contornados.
+- Figma ↔ Illustrator: conexão SVG direta com o painel Illustrator. SEND TO FIGMA envia pelo Illustrator; PUSH FROM AI recebe pelo Figma. Textos do Illustrator são enviados como contornos vetoriais editáveis, sem edição tipográfica.
 - Photoshop → After: cópia PSD importada em camadas, preservando o documento original. Guias nos dois sentidos. Texto e shapes nativos editáveis, máscaras e efeitos ainda precisam de desenvolvimento/validação. After → Photoshop em camadas não está implementado.
 - PRECOMP, DECOMP, JOIN e SPLIT para estruturas compatíveis. JOIN consolida transforms no quadro atual; não preserva toda a animação dos transforms. PRECOMP tem margem de 10 px e recusa expressions de Position. DECOMP não suporta time remapping.
 
@@ -42,3 +42,11 @@ Figma ↔ Illustrator exige apenas Figma e o painel Transferify do Illustrator a
 Figma ↔ Photoshop e o fluxo completo Photoshop ↔ After ficam para implementação futura. O PUSH FROM PS legado permanece experimental; não equivale a uma integração completa validada.
 
 Na 0.8.6, Frames enviados ao Illustrator mantêm seu tamanho de artboard e usam recorte seletivo: apenas objetos que ultrapassam os limites recebem uma nova clipping mask retangular. Os elementos internos ficam sem esse recorte adicional.
+
+Na 0.8.7, a importação é feita diretamente no documento atual, sem abrir documentos temporários. Grupos de transporte são removidos, preservando um nível dos grupos de origem, recortes e composição de transparência. Novos Frames recebem seu próprio artboard, com 150 px entre bordas em ordem de leitura; ao atingir a margem direita real do canvas, a importação continua abaixo, alinhada à esquerda. Não há redimensionamento dos artboards existentes.
+
+## Abas de destino
+
+Selecione a aba do aplicativo para o qual deseja enviar. O próprio aplicativo não aparece como destino. Abas desconectadas ficam desabilitadas; se houver apenas um destino conectado, ele é selecionado automaticamente. No After, as ferramentas locais de composição continuam disponíveis junto às funções do destino selecionado.
+
+Abra o plugin no documento Figma que deve receber a seleção do Illustrator. O envio fica vinculado à sessão e página desse plugin e só termina após a confirmação do Figma. Documentos inativos suspendem a consulta de envios. Se houver um timeout, confira o destino antes de repetir.

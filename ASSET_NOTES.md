@@ -1,5 +1,7 @@
 # Recursos binários do Transferify
 
+`Transferify/assets/georama-bold.ttf` é a fonte Georama Bold, distribuída pelo Google Fonts sob a SIL Open Font License. A licença está em `Transferify/assets/Georama-OFL.txt`. A mesma fonte é incorporada na interface do plugin Figma para uso local, sem requisições de fonte externas. Fonte e licença: https://github.com/google/fonts/tree/main/ofl/georama.
+
 Os dois recursos de gradiente são templates técnicos sintéticos, necessários para criar preenchimentos nativos do After. Não são artes de cliente.
 
 - `gradient-template.aep`: projeto RIFX com uma composição `Transferify Gradient Template` e uma shape layer `Transferify Gradient`, paths e um preenchimento de gradiente. Não contém fotos ou vídeos. O XMP externo foi removido; o nome de workspace foi substituído por Default.

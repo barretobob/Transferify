@@ -1,3 +1,11 @@
+0.8.7 — 25/11/2026
+- Abas de destino no After, Illustrator e Figma, com o destino selecionado em destaque e funções conforme os aplicativos conectados.
+- Envio direto Illustrator → Figma com confirmação, timeout e deduplicação. Textos chegam como contornos vetoriais editáveis.
+- Sessão e página do documento Figma vinculadas ao envio; documentos inativos suspendem a consulta.
+- Exportação Illustrator sem documentos/artboards temporários, com restauração da seleção e remoção do asset temporário.
+- Inclui os ajustes locais preparados na 0.8.6: importação em segundo plano, 150 px entre artboards, remoção dos grupos de transporte e quebra de linha no limite nativo do canvas.
+- QA nativo no macOS com o After fechado; Windows e integração Photoshop ainda em validação.
+
 0.8.6 — 25/11/2026
 Figma → Illustrator: recorte seletivo baseado nos limites do Frame original. Só objetos que ultrapassam o artboard ganham nova clipping mask; os demais ficam sem esse recorte. Preserva ordem, conteúdo editável e máscaras internas.
 

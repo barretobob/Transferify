@@ -13,7 +13,13 @@ function openOriginalFigmaFrame(root,frame){
  drawable[0].removeAttribute('clip-path');root.setAttribute('overflow','visible');return true;
 }
 
-function prepareIllustratorSVG(svg,frame) {
+function markOriginalIllustratorGroups(root,groups){
+ var used=[],all=root.querySelectorAll('g[id]'),doc=root.ownerDocument;
+ for(var gi=0;gi<(groups||[]).length;gi++){var meta=groups[gi];for(var ni=0;ni<all.length;ni++){var n=all[ni];if(used.indexOf(n)>=0||n.getAttribute('id')!==meta.name)continue;var wrapper=doc.createElementNS('http://www.w3.org/2000/svg','g');wrapper.setAttribute('id',meta.token);n.parentNode.insertBefore(wrapper,n);wrapper.appendChild(n);used.push(n);break;}}
+ return used.length>0;
+}
+
+function prepareIllustratorSVG(svg,frame,groups) {
  var ns='http://www.w3.org/2000/svg',doc=new DOMParser().parseFromString(svg,'image/svg+xml'),root=doc.documentElement,mount=null;
  if(root.localName!=='svg'||doc.querySelector('parsererror'))throw Error('Invalid SVG export.');
  var all=root.querySelectorAll('*');
@@ -21,7 +27,7 @@ function prepareIllustratorSVG(svg,frame) {
   if(/^(script|foreignObject)$/i.test(all[i].localName))throw Error('Active SVG is not supported.');
   for(var ai=0;ai<all[i].attributes.length;ai++){var attr=all[i].attributes[ai];if(/^on/i.test(attr.name))throw Error('Active SVG attributes are not supported.');if(/(^|:)href$/i.test(attr.name)&&!/^#|^data:image\/(png|jpeg|webp|gif);base64,/i.test(attr.value))throw Error('External SVG resources are not supported.');var urls=attr.value.match(/url\([^)]*\)/ig)||[];for(var ui=0;ui<urls.length;ui++)if(urls[ui].slice(4,-1).trim().replace(/^['"]|['"]$/g,'').charAt(0)!=='#')throw Error('External SVG resources are not supported.');}
  }
- var frameOpened=openOriginalFigmaFrame(root,frame);var patterns=root.querySelectorAll('pattern');if(!patterns.length)return frameOpened?new XMLSerializer().serializeToString(root):svg;
+ var frameOpened=openOriginalFigmaFrame(root,frame),groupsMarked=markOriginalIllustratorGroups(root,groups);var patterns=root.querySelectorAll('pattern');if(!patterns.length)return frameOpened||groupsMarked?new XMLSerializer().serializeToString(root):svg;
  function id(value){var nodes=root.querySelectorAll('[id]');for(var i=0;i<nodes.length;i++)if(nodes[i].getAttribute('id')===value)return nodes[i];return null;}
  function node(name){return doc.createElementNS(ns,name);}
  var defs=root.querySelector('defs');if(!defs){defs=node('defs');root.appendChild(defs);}

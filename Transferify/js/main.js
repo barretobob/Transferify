@@ -6,16 +6,30 @@
   function status(t){$("status").textContent=t;}
   function esc(s){return String(s).replace(/\\/g,"\\\\").replace(/"/g,'\\"');}
   var busy=false,hostReady=false;
+  var peerPresence={ae:false,ai:false,figma:false,ps:false},activePeer=null,peerPolling=false,peerTimer=null;
+  function renderPeers(){
+    if(!activePeer)return;
+    var controls=document.querySelectorAll('[data-peer]');for(var pi=0;pi<controls.length;pi++){var e=controls[pi],peer=e.getAttribute('data-peer');e.hidden=peer!==activePeer;var buttons=e.tagName==='BUTTON'?[e]:e.querySelectorAll('button');for(var bi=0;bi<buttons.length;bi++)buttons[bi].disabled=busy||!hostReady||!peerPresence[peer];}
+    window.TransferifyTabs.render(document,h+'-tab-',h,peerPresence,activePeer,busy||!hostReady);
+  }
+  function selectPeer(peer){if(busy||window.TransferifyTabs.targets(h).indexOf(peer)<0)return;activePeer=peer;localStorage.setItem('transferify.destination.'+h,peer);renderPeers();}
+  function initPeers(){
+    activePeer=window.TransferifyTabs.choose(h,peerPresence,localStorage.getItem('transferify.destination.'+h));
+    window.TransferifyTabs.targets(h).forEach(function(peer){var button=$(h+'-tab-'+peer);if(button)button.onclick=function(){if(peerPresence[peer])selectPeer(peer);};});renderPeers();
+    function poll(){if(busy||!hostReady||peerPolling)return;peerPolling=true;cs.evalScript('Transferify.getPeerApps()',function(raw){peerPolling=false;try{var apps=JSON.parse(raw);peerPresence.ae=apps.ae===true;peerPresence.ai=apps.ai===true;peerPresence.ps=apps.ps===true;}catch(_){}peerPresence.figma=!!(figmaServer&&figmaServer.getStatus().figmaConnected);activePeer=window.TransferifyTabs.choose(h,peerPresence,activePeer);renderPeers();});}
+    peerTimer=setInterval(poll,2500);poll();
+  }
+
   function setBusy(v,msg){
     busy=v;$("progressWrap").style.display=v?"block":"none";
     var bs=document.querySelectorAll("button");for(var i=0;i<bs.length;i++)bs[i].disabled=v;
-    if(msg)status(msg);
+    if(msg)status(msg);renderPeers();
   }
   function run(fn,args,cb){
     if(busy||!hostReady)return;
     var a=args||[],parts=[];
     for(var i=0;i<a.length;i++)parts.push('"'+esc(a[i])+'"');
-    setBusy(true,"WORKING • "+fn);
+    setBusy(true,"Transferindo…");
     var freshHost=cs.getSystemPath(SystemPath.EXTENSION)+'/jsx/host.jsx';
     var reloadHost='$.evalFile(new File('+JSON.stringify(freshHost)+'));';
     cs.evalScript(reloadHost+"Transferify."+fn+"("+parts.join(",")+")",function(r){
@@ -81,6 +95,8 @@
   $('compBackground').onclick=function(){var button=this,old=button.value||'#000000';run('chooseBackgroundColor',[old],function(result){if(/^#[0-9a-fA-F]{6}$/.test(result||'')){button.value=result;localStorage.setItem('transferify.qa.compBackground',result);paintBackground();syncOptions();}});};
   $('pushFromFigma').onclick=function(){if(!figmaServer){status('Open the Figma plugin and wait for the connection.');return;}var result=figmaServer.requestPull(figmaMode);status(result.message);};
   $('applyComp').onclick=function(){var o=figmaOptions();run('applyCompSettings',[JSON.stringify(o)]);};
+  if($('pushFromFigmaAI'))$('pushFromFigmaAI').onclick=function(){if(!figmaServer)return status('Aguarde a conexão com o Figma.');var result=figmaServer.requestPull('new');status(result.message);};
+  if($('sendFigmaAI'))$('sendFigmaAI').onclick=function(){if(busy||!hostReady)return;if(!figmaServer)return status('Recarregue o painel Illustrator.');figmaServer.sendToFigma(function(result){setBusy(false);status(result.message);});};
   var figmaServer=null;
   function startReceiver(){
     if(figmaServer)return;
@@ -88,9 +104,9 @@
       function loadNative(script,callback){cs.evalScript('$.evalFile(new File('+JSON.stringify(root+'/jsx/host.jsx')+'));'+script,callback);}
       function waitNativeResult(key,callback){var start=Date.now();function poll(){cs.evalScript('Transferify.'+key+'?Transferify._plainJSON(Transferify.'+key+'):"PENDING"',function(value){if(value==='PENDING'&&Date.now()-start<90000){setTimeout(poll,200);return;}try{callback(JSON.parse(value));}catch(e){callback({ok:false,message:'Destination timed out. Check the destination before retrying.'});}});}poll();}
       var aiDirect=h==='ai'?nodeRequire(root+'/js/illustrator-direct.js').create({hostFile:root+'/jsx/host.jsx',evalScript:function(script,done){cs.evalScript(script,done);},busy:function(value,message){setBusy(value,message);}}):null;
-      figmaServer=bridge.start({host:h,assetDir:root+'/assets',update:updateTransferify,exportIllustrator:aiDirect?aiDirect.exportIllustrator:null,activate:function(done){cs.evalScript('(function(){try{BridgeTalk.bringToFront(BridgeTalk.appName);return "OK";}catch(e){return "ERROR: "+String(e);}})()',function(r){done(r==='OK'?null:r||'After did not respond');});},isBusy:function(){return busy;},importer:function(data,done){
+      figmaServer=bridge.start({onFigmaComplete:function(result){setBusy(false);status(result.message);},onFigmaWaiting:function(){setBusy(true,'Transferindo…');},host:h,assetDir:root+'/assets',update:updateTransferify,exportIllustrator:aiDirect?aiDirect.exportIllustrator:null,activate:function(done){cs.evalScript('(function(){try{BridgeTalk.bringToFront(BridgeTalk.appName);return "OK";}catch(e){return "ERROR: "+String(e);}})()',function(r){done(r==='OK'?null:r||'After did not respond');});},isBusy:function(){return busy;},importer:function(data,done){
         if(h==='ai'){aiDirect.importer(data,done);return;}
-        var requestedMode=data.compMode,precompGroups=data.precompGroups===true;data.importOptions=figmaOptions();data.importOptions.precompGroups=precompGroups;if(requestedMode==='new'||requestedMode==='current')data.importOptions.mode=requestedMode;data.matchFigmaAlpha=$('figmaMatchAlpha').checked;setBusy(true,'IMPORTING FROM FIGMA…');
+        var requestedMode=data.compMode,precompGroups=data.precompGroups===true;data.importOptions=figmaOptions();data.importOptions.precompGroups=precompGroups;if(requestedMode==='new'||requestedMode==='current')data.importOptions.mode=requestedMode;data.matchFigmaAlpha=$('figmaMatchAlpha').checked;setBusy(true,'Transferindo…');
         var fs=nodeRequire('fs'),path=nodeRequire('path'),os=nodeRequire('os'),tempDir=null;
         function finish(result){setBusy(false);if(tempDir)try{fs.rmSync(tempDir,{recursive:true,force:true});}catch(ignore){}status(result.message+(result.warnings&&result.warnings.length?' • '+result.warnings.join(' | '):''));done(result);}
         try{
@@ -105,17 +121,17 @@
           }});
         }catch(e){finish({ok:false,message:'Falha ao preparar envio ao After: '+String(e.message||e)});}
 
-      }},function(error){if(error){figmaServer=null;$('connectionState').textContent='Connection: '+error.message;status('Connection: '+error.message);return;}$('connectionState').textContent='Direct Figma connection active · '+(h==='ai'?'Illustrator':'After Effects');$('figmaPause').textContent='Pause receiver';status('READY · FIGMA CONNECTED');});
+      }},function(error){if(error){figmaServer=null;$('connectionState').textContent='Connection: '+error.message;status('Connection: '+error.message);return;}$('connectionState').textContent='Direct Figma connection active · '+(h==='ai'?'Illustrator':'After Effects');$('figmaPause').textContent='Pause receiver';status('READY');});
     }catch(e){figmaServer=null;status('Connection: '+e.message);}
   }
   $('figmaReconnect').onclick=function(){if(figmaServer){var old=figmaServer;figmaServer=null;old.close(startReceiver);}else startReceiver();};
   $('figmaPause').onclick=function(){if(figmaServer){figmaServer.close();figmaServer=null;$('connectionState').textContent='Receiver paused';$('figmaPause').textContent='Resume receiver';}else startReceiver();};
-  window.addEventListener('beforeunload',function(){if(figmaServer)figmaServer.close();});
+  window.addEventListener('beforeunload',function(){if(peerTimer)clearInterval(peerTimer);if(figmaServer)figmaServer.close();});
   $('settingsToggle').onclick=function(){var menu=$('settingsMenu');menu.hidden=!menu.hidden;this.setAttribute('aria-expanded',String(!menu.hidden));};
   function updateTransferify(done){
     if(busy){if(done)done({ok:false,message:'Transferify ocupado. Aguarde a transferência terminar.'});return;}
     setBusy(true,'CHECKING FOR UPDATES…');
-    try{var nr=typeof require==='function'?require:window.cep_node.require,root=cs.getSystemPath(SystemPath.EXTENSION);(function(){var modulePath=root+'/js/updater.js';if(nr.cache&&nr.resolve)delete nr.cache[nr.resolve(modulePath)];return nr(modulePath);})().run(root,'0.8.6').then(function(result){setBusy(false);status(result.message);if(done)done(result);},function(error){var result={ok:false,message:String(error.message||error)};setBusy(false);status(result.message);if(done)done(result);});}catch(error){var result={ok:false,message:String(error.message||error)};setBusy(false);status(result.message);if(done)done(result);}
+    try{var nr=typeof require==='function'?require:window.cep_node.require,root=cs.getSystemPath(SystemPath.EXTENSION);(function(){var modulePath=root+'/js/updater.js';if(nr.cache&&nr.resolve)delete nr.cache[nr.resolve(modulePath)];return nr(modulePath);})().run(root,'0.8.7').then(function(result){setBusy(false);status(result.message);if(done)done(result);},function(error){var result={ok:false,message:String(error.message||error)};setBusy(false);status(result.message);if(done)done(result);});}catch(error){var result={ok:false,message:String(error.message||error)};setBusy(false);status(result.message);if(done)done(result);}
   }
   $('updatePlugin').onclick=function(){$('settingsMenu').hidden=true;$('settingsToggle').setAttribute('aria-expanded','false');updateTransferify();};
   $('reloadPanel').onclick=function(){
@@ -134,6 +150,6 @@
   var hostFile=cs.getSystemPath(SystemPath.EXTENSION)+'/jsx/host.jsx';
   cs.evalScript('(function(){try{$.evalFile(new File('+JSON.stringify(hostFile)+'));return "HOST_READY";}catch(e){return "ERROR: "+String(e);}})()',function(result){
     if(!result||result==='EvalScript error.'||String(result).indexOf('ERROR')===0){status(result||'ERROR: Host script did not load');return;}
-    hostReady=true;status('READY');if(h==='ae')syncOptions(function(){startReceiver();});else startReceiver();
+    hostReady=true;status('READY');initPeers();if(h==='ae')syncOptions(function(){startReceiver();});else startReceiver();
   });
 })();

@@ -21,6 +21,8 @@ jobs:
           python-version: '3.x'
       - name: Test updater and gradient copy
         run: |
+          node tests/test-tabs.cjs
+          node tests/test-layout.cjs
           node tests/test-selective-clip.cjs
           node tests/test-svg-cleanup.cjs
           node tests/test-independent.cjs

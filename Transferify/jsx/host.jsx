@@ -2681,3 +2681,5 @@ Transferify.pushFromPS=function(destination){
 
 
 (function(){var moduleFile=new File(new File($.fileName).parent.fsName+'/figma-illustrator.jsx');if(moduleFile.exists)$.evalFile(moduleFile);})();
+
+Transferify.getPeerApps=function(){var result={ai:false,ae:false,ps:false};try{var targets=BridgeTalk.getTargets();for(var i=0;i<targets.length;i++){var t=String(targets[i]),name=t.toLowerCase().split('-')[0];if(!BridgeTalk.isRunning(t))continue;if(name=='illustrator')result.ai=true;else if(name=='aftereffects')result.ae=true;else if(name=='photoshop')result.ps=true;}}catch(_){}return Transferify._plainJSON(result);};

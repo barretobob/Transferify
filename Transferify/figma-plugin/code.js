@@ -1,4 +1,5 @@
-figma.showUI(__html__, {width: 240, height: 450, themeColors: true});
+figma.showUI(__html__, {width: 240, height: 490, themeColors: true});
+let savedDestination='after';const receivedTransfers=new Map();figma.clientStorage.getAsync('transferify.destination').then(value=>{if(value==='after'||value==='illustrator')savedDestination=value;figma.ui.postMessage({type:'destination',value:savedDestination});}).catch(()=>{});
 function identity(){return [[1,0,0],[0,1,0]];}
 function mul(a,b){return [[a[0][0]*b[0][0]+a[0][1]*b[1][0],a[0][0]*b[0][1]+a[0][1]*b[1][1],a[0][0]*b[0][2]+a[0][1]*b[1][2]+a[0][2]],[a[1][0]*b[0][0]+a[1][1]*b[1][0],a[1][0]*b[0][1]+a[1][1]*b[1][1],a[1][0]*b[0][2]+a[1][1]*b[1][2]+a[1][2]]];}
 function inverse(m){const d=m[0][0]*m[1][1]-m[0][1]*m[1][0];if(Math.abs(d)<1e-10)throw Error('Uma layer tem escala zero.');return [[m[1][1]/d,-m[0][1]/d,(m[0][1]*m[1][2]-m[1][1]*m[0][2])/d],[-m[1][0]/d,m[0][0]/d,(m[1][0]*m[0][2]-m[0][0]*m[1][2])/d]];}
@@ -133,20 +134,21 @@ async function exportSelection(options){
 async function exportIllustratorSelection(options){
  const selected=options.selection;if(!selected.length)throw Error('Select artwork in Figma first.');
  const ids=new Set(selected.map(n=>n.id)),roots=selected.filter(n=>{let p=n.parent;while(p){if(ids.has(p.id))return false;p=p.parent;}return true;});
- roots.sort(selectedPaintOrder);selectedBudget(roots);
+ roots.sort(selectedPaintOrder);if(roots.every(n=>n.type==='FRAME'))roots.sort((a,b)=>{const x=a.absoluteBoundingBox,y=b.absoluteBoundingBox;return Math.abs(x.y-y.y)<Math.min(x.height,y.height)/2?x.x-y.x:x.y-y.y;});selectedBudget(roots);
  const bounds=roots.map(n=>n.absoluteRenderBounds||n.absoluteBoundingBox),left=Math.min(...bounds.map(b=>b.x)),top=Math.min(...bounds.map(b=>b.y)),items=[];
- for(let i=0;i<roots.length;i++){const node=roots[i],svg=await node.exportAsync({format:'SVG_STRING',svgOutlineText:false,svgIdAttribute:true});items.push({name:node.name,x:bounds[i].x-left,y:bounds[i].y-top,svg,frame:node.type==='FRAME'?{nodeId:node.id,type:node.type,width:node.width,height:node.height,clipsContent:node.clipsContent}:null});}
+ for(let i=0;i<roots.length;i++){const node=roots[i],groups=[];function collect(n){if(n.type==='GROUP')groups.push({token:'TF_GROUP_'+n.id.replace(/[^a-zA-Z0-9_]/g,'_'),name:n.name});if('children' in n)for(const c of n.children)collect(c);}collect(node);const svg=await node.exportAsync({format:'SVG_STRING',svgOutlineText:false,svgIdAttribute:true});items.push({name:node.name,x:bounds[i].x-left,y:bounds[i].y-top,svg,groups,frame:node.type==='FRAME'?{nodeId:node.id,type:node.type,width:node.width,height:node.height,clipsContent:node.clipsContent}:null});}
  return {protocol:'transferify-figma-svg',version:1,items};
 }
 figma.ui.onmessage=async msg=>{try{
- if(msg.type==='reload'){figma.showUI(__html__,{width:240,height:490,themeColors:true});reportSelection();}
+ if(msg.type==='reload'){figma.showUI(__html__,{width:240,height:490,themeColors:true});reportSelection();figma.ui.postMessage({type:'destination',value:savedDestination});}
+ else if(msg.type==='set-destination'){if(msg.value==='after'||msg.value==='illustrator'){savedDestination=msg.value;try{await figma.clientStorage.setAsync('transferify.destination',savedDestination);}catch(_){}}}
  else if(msg.type==='prepare'){const selection=exactSelection(msg.selectionIds);const options={selection,compMode:msg.compMode,reference:!!msg.reference,rasterize:!!msg.rasterize,precompGroups:typeof msg.precompGroups==='boolean'?msg.precompGroups:undefined};const payload=msg.destination==='illustrator'?await exportIllustratorSelection(options):await exportSelection(options);figma.ui.postMessage({type:'payload',payload});}
  else if(msg.type==='import-illustrator'){
-  const svg=String(msg.data.svg||'').replace(/<\?xml[^>]*>/g,'').replace(/<!DOCTYPE[\s\S]*?>/gi,'');
-  const node=figma.createNodeFromSvg(svg);node.name=msg.data.name||'Illustrator selection';
-  const selection=figma.currentPage.selection,anchor=selection.length?selection[0].absoluteBoundingBox:null;
-  node.x=anchor?anchor.x+anchor.width+60:figma.viewport.center.x-node.width/2;node.y=anchor?anchor.y:figma.viewport.center.y-node.height/2;
-  figma.currentPage.selection=[node];figma.ui.postMessage({type:'import-complete',name:node.name,warnings:msg.data.warnings||[]});
+  const commandId=/^[a-f0-9]{32}$/.test(msg.commandId||'')?msg.commandId:null;
+  let node=commandId?receivedTransfers.get(commandId):null;
+  if(commandId&&(!node||node.removed))node=figma.currentPage.children.find(n=>n.getSharedPluginData('transferify','receiveId')===commandId);
+  if(!node||node.removed){const svg=String(msg.data.svg||'').replace(/<\?xml[^>]*>/g,'').replace(/<!DOCTYPE[\s\S]*?>/gi,'');node=figma.createNodeFromSvg(svg);node.name=msg.data.name||'Illustrator selection';const selection=figma.currentPage.selection,anchor=selection.length?selection[0].absoluteBoundingBox:null;node.x=anchor?anchor.x+anchor.width+150:figma.viewport.center.x-node.width/2;node.y=anchor?anchor.y:figma.viewport.center.y-node.height/2;if(commandId){node.setSharedPluginData('transferify','receiveId',commandId);receivedTransfers.set(commandId,node);}}
+  figma.currentPage.selection=[node];figma.ui.postMessage({type:'import-complete',commandId:commandId,name:node.name,warnings:msg.data.warnings||[]});
  }
- }catch(e){figma.ui.postMessage({type:'error',message:String(e.message||e)});}};
-function reportSelection(){const selection=[...figma.currentPage.selection];figma.ui.postMessage({type:'selection',count:selection.length,ids:selection.map(n=>n.id)});}figma.on('selectionchange',reportSelection);reportSelection();
+ }catch(e){figma.ui.postMessage({type:'error',commandId:msg.commandId||null,message:String(e.message||e)});}};
+function reportSelection(){figma.ui.postMessage({type:'document',pageId:figma.currentPage.id});const selection=[...figma.currentPage.selection];figma.ui.postMessage({type:'selection',count:selection.length,ids:selection.map(n=>n.id)});}figma.on('selectionchange',reportSelection);figma.on('currentpagechange',reportSelection);reportSelection();
