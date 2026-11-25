@@ -1,4 +1,4 @@
-Transferify 0.8.5 — versão de testes
+Transferify 0.8.6 — versão de testes
 
 Comece por INSTALACAO.md (Mac e Windows).
 Use a pasta CEP do usuário e importe no Figma o manifesto da subpasta figma-plugin dessa instalação permanente.

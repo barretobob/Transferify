@@ -1,4 +1,4 @@
-# Transferify 0.8.5 — versão de testes
+# Transferify 0.8.6 — versão de testes
 
 Transfere artes entre After Effects, Illustrator, Figma e, parcialmente, Photoshop.
 
@@ -33,10 +33,12 @@ Abra uma issue com sistema operacional, versões dos apps, versão Transferify, 
 
 O código da extensão fica nesta pasta. `scripts/build_release.py`, na raiz do repositório, produz o ZIP e `transferify-update.json` para uma release. Esse arquivo é a carga de atualização usada pelos painéis; os dois assets devem ser publicados na mesma tag. O cliente usa a última release pública estável do GitHub (rascunhos e prereleases não entram em Update).
 
-Na 0.8.5, a cópia de gradientes usa o ID da camada criada e remove a geometria auxiliar do template. Validado em teste nativo com duas sombras dentro de precomp, sem retângulo ou camada auxiliar remanescentes.
+Na 0.8.4, a cópia de gradientes usa o ID da camada criada e remove a geometria auxiliar do template. Validado em teste nativo com duas sombras dentro de precomp, sem retângulo ou camada auxiliar remanescentes.
 
-## Fluxos independentes na 0.8.5
+## Fluxos independentes desde a 0.8.5
 
 Figma ↔ Illustrator exige apenas Figma e o painel Transferify do Illustrator aberto. Não abre nem usa o After. Figma ↔ After usa somente o receptor do After. Illustrator ↔ After continua por comunicação direta entre esses dois aplicativos. Cada receptor tem sua própria porta e sessão local: After 17860, Illustrator 17861.
 
 Figma ↔ Photoshop e o fluxo completo Photoshop ↔ After ficam para implementação futura. O PUSH FROM PS legado permanece experimental; não equivale a uma integração completa validada.
+
+Na 0.8.6, Frames enviados ao Illustrator mantêm seu tamanho de artboard e usam recorte seletivo: apenas objetos que ultrapassam os limites recebem uma nova clipping mask retangular. Os elementos internos ficam sem esse recorte adicional.

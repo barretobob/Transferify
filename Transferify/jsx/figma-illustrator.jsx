@@ -1,5 +1,28 @@
 /* SVG transport for Figma <-> Illustrator. Development, no startup actions. */
 Transferify._receiveFigmaSVG=function(pack){
+ // Selective clipping is local to this import and uses the metadata-confirmed Frame artboard.
+ function directChildren(parent){var out=[];for(var ci=0;ci<parent.pageItems.length;ci++){var child=parent.pageItems[ci];if(child.parent==parent)out.push(child);}return out;}
+ function effectiveBounds(item){
+  if(item.typename!='GroupItem')return item.visibleBounds;
+  var children=directChildren(item),bounds=null,clip=null;
+  for(var ci=0;ci<children.length;ci++){
+   var child=children[ci],isClip=child.typename=='PathItem'&&child.clipping;
+   if(child.typename=='CompoundPathItem'&&child.pathItems.length)isClip=child.pathItems[0].clipping;
+   if(item.clipped&&isClip){clip=child.geometricBounds;continue;}
+   var b=effectiveBounds(child);if(!b)continue;
+   if(!bounds)bounds=[b[0],b[1],b[2],b[3]];else{bounds[0]=Math.min(bounds[0],b[0]);bounds[1]=Math.max(bounds[1],b[1]);bounds[2]=Math.max(bounds[2],b[2]);bounds[3]=Math.min(bounds[3],b[3]);}
+  }
+  if(item.clipped&&clip&&bounds){bounds=[Math.max(bounds[0],clip[0]),Math.min(bounds[1],clip[1]),Math.min(bounds[2],clip[2]),Math.max(bounds[3],clip[3])];if(bounds[0]>=bounds[2]||bounds[1]<=bounds[3])return null;}
+  // Unknown clipping structures stay atomic, retaining their original appearance.
+  return item.clipped&&!clip?item.visibleBounds:bounds;
+ }
+ function clipOverflow(item,frame){
+  var bounds=effectiveBounds(item),epsilon=0.01;if(!bounds)return;
+  if(bounds[0]>=frame[0]-epsilon&&bounds[1]<=frame[1]+epsilon&&bounds[2]<=frame[2]+epsilon&&bounds[3]>=frame[3]-epsilon)return;
+  if(item.typename=='GroupItem'&&!item.clipped){var children=directChildren(item);for(var ci=0;ci<children.length;ci++)clipOverflow(children[ci],frame);return;}
+  var parent=item.parent,wrapper=parent.groupItems.add();wrapper.name=item.name||'Frame clip';wrapper.move(item,ElementPlacement.PLACEBEFORE);item.move(wrapper,ElementPlacement.PLACEATEND);
+  var mask=wrapper.pathItems.rectangle(frame[1],frame[0],frame[2]-frame[0],frame[1]-frame[3]);mask.name='Frame bounds';mask.filled=false;mask.stroked=false;mask.clipping=true;mask.move(wrapper,ElementPlacement.PLACEATBEGINNING);wrapper.clipped=true;
+ }
  var source=null,original=null,destinationLayer=null,created=[],unownedCopies=[],files=[],addedBoards=[],boardBefore=null,stage="start",oldInteraction=app.userInteractionLevel;
  try{
   app.userInteractionLevel=UserInteractionLevel.DONTDISPLAYALERTS;
@@ -15,6 +38,7 @@ Transferify._receiveFigmaSVG=function(pack){
    stage="create group";var group=targetLayer.groupItems.add();group.name=item.name;created.push(group);
    for(var j=0;j<copies.length;j++)copies[j].move(group,ElementPlacement.PLACEATEND);
    stage="position artwork";var copiedBounds=group.geometricBounds;group.translate(sourceLeft+ab[0]+item.x-rect[0]-copiedBounds[0],sourceTop+ab[1]-item.y-rect[1]-copiedBounds[1]);
+   if(item.frame&&item.frame.type=='FRAME'&&item.frame.nodeId){stage="clip overflowing objects";clipOverflow(group,frameRect);}
    app.activeDocument=source;source.close(SaveOptions.DONOTSAVECHANGES);source=null;app.activeDocument=original;
   }
   app.activeDocument=original;original.selection=null;for(var i=0;i<created.length;i++)created[i].selected=true;

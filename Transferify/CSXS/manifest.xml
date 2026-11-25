@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ExtensionManifest Version="7.0" ExtensionBundleId="com.robb.transferify.qa" ExtensionBundleVersion="0.8.5" ExtensionBundleName="Transferify 0.8.5">
+<ExtensionManifest Version="7.0" ExtensionBundleId="com.robb.transferify.qa" ExtensionBundleVersion="0.8.6" ExtensionBundleName="Transferify 0.8.6">
   <ExtensionList>
-    <Extension Id="com.robb.transferify.qa.panel" Version="0.8.5"/>
+    <Extension Id="com.robb.transferify.qa.panel" Version="0.8.6"/>
   </ExtensionList>
   <ExecutionEnvironment>
     <HostList>
@@ -25,7 +25,7 @@
         <Lifecycle><AutoVisible>true</AutoVisible></Lifecycle>
         <UI>
           <Type>Panel</Type>
-          <Menu>Transferify 0.8.5</Menu>
+          <Menu>Transferify 0.8.6</Menu>
           <Geometry>
             <Size><Height>625</Height><Width>516</Width></Size>
             <MinSize><Height>260</Height><Width>150</Width></MinSize>

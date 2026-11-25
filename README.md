@@ -1,4 +1,4 @@
-# Transferify 0.8.5
+# Transferify 0.8.6
 
 Transferência de artes entre After Effects, Illustrator, Figma e Photoshop (parcial).
 

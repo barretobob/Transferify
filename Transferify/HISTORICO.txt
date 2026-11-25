@@ -1,3 +1,6 @@
+0.8.6 — 25/11/2026
+Figma → Illustrator: recorte seletivo baseado nos limites do Frame original. Só objetos que ultrapassam o artboard ganham nova clipping mask; os demais ficam sem esse recorte. Preserva ordem, conteúdo editável e máscaras internas.
+
 Transferify — histórico público
 
 0.8.5 — 25/11/2026

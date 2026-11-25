@@ -1,4 +1,4 @@
-# Instalação — Transferify 0.8.5
+# Instalação — Transferify 0.8.6
 
 Pacote de testes para After Effects e Illustrator, com plugin Figma e integração parcial Photoshop. Use apps Adobe com suporte a painéis CEP. Windows ainda não foi validado em um computador Windows.
 
@@ -18,7 +18,7 @@ Pacote de testes para After Effects e Illustrator, com plugin Figma e integraç�
    ```
 
    Se o app usar CEP 11 ou 10, substitua `12` pelo número correspondente. O número é do CEP, não do Transferify. Consulte os logs `~/Library/Logs/CSXS/` para identificar o runtime. Se a preferência não surtir efeito, encerre a sessão do macOS e entre novamente.
-5. Abra os apps e procure **Janela → Extensões → Transferify 0.8.5**. Dependendo do app, o submenu aparece como **Extensões (Legado)**.
+5. Abra os apps e procure **Janela → Extensões → Transferify 0.8.6**. Dependendo do app, o submenu aparece como **Extensões (Legado)**.
 
 ## Windows
 
@@ -33,7 +33,7 @@ Pacote de testes para After Effects e Illustrator, com plugin Figma e integraç�
    ```
 
    Para CEP 11 ou 10, troque `12` pelo número correto. Os logs `CEP*-AEFT*.log` e `CEP*-ILST*.log` em `%LOCALAPPDATA%\Temp\` ajudam a identificar a versão.
-5. Abra os apps e procure **Window/Janela → Extensions/Extensões (Legacy/Legado) → Transferify 0.8.5**.
+5. Abra os apps e procure **Window/Janela → Extensions/Extensões (Legacy/Legado) → Transferify 0.8.6**.
 
 Esses passos seguem os diretórios e a configuração de desenvolvimento descritos pela [Adobe no guia CEP](https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_12.x/Documentation/CEP%2012%20HTML%20Extension%20Cookbook.md#debugging-unsigned-extensions).
 
@@ -49,7 +49,7 @@ Esses passos seguem os diretórios e a configuração de desenvolvimento descrit
 1. Use o aplicativo **Figma Desktop** e abra um arquivo Design.
 2. Abra **Plugins → Development → Import new plugin from manifest…**.
 3. Escolha o `figma-plugin/manifest.json` que está **dentro da pasta Transferify instalada no CEP do usuário**, não dentro do ZIP ou em Downloads. Essa localização permanente permite que Update atualize também o plugin.
-4. Execute **Transferify 0.8.5** em Plugins → Development.
+4. Execute **Transferify 0.8.6** em Plugins → Development.
 5. Abra o painel Transferify somente no app de destino/origem: Illustrator para Figma ↔ Illustrator (`localhost:17861`), ou After para Figma ↔ After (`localhost:17860`). Não é necessário abrir o terceiro app. Deixe só um receptor por aplicativo aberto.
 
 A importação de um manifesto local é o procedimento de desenvolvimento documentado pelo [Figma](https://help.figma.com/hc/en-us/articles/360042786733-Create-a-classic-plugin-for-development). Não é uma instalação pela Figma Community.
@@ -79,6 +79,6 @@ Não há um painel Transferify separado para instalar no Photoshop. Abra o docum
 
 ## Se não abrir ou não conectar
 
-Confira a estrutura de pastas, PlayerDebugMode do runtime correto, apps reiniciados e instalações duplicadas. A extensão precisa aparecer com a versão 0.8.5. No Figma, use o plugin do mesmo pacote e reabra-o após substituir arquivos. Se a porta do aplicativo estiver em uso (17860 After, 17861 Illustrator), feche o receptor antigo desse app e reabra o atual. Não desative firewall ou antivírus globalmente para testar.
+Confira a estrutura de pastas, PlayerDebugMode do runtime correto, apps reiniciados e instalações duplicadas. A extensão precisa aparecer com a versão 0.8.6. No Figma, use o plugin do mesmo pacote e reabra-o após substituir arquivos. Se a porta do aplicativo estiver em uso (17860 After, 17861 Illustrator), feche o receptor antigo desse app e reabra o atual. Não desative firewall ou antivírus globalmente para testar.
 
 Registre sistema, versões dos apps, mensagem exata e captura do problema ao reportar. A instalação no Windows e os recursos de atualização precisam de validação nos ambientes de destino; nenhum documento garante funcionamento com todos os efeitos e versões Adobe.
